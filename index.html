@@ -4,78 +4,366 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>模擬投資平台 - 儀表板</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #121212; color: #E0E0E0; }
-        .header { background-color: #1F1F1F; padding: 20px; text-align: center; border-bottom: 3px solid #00A67E; }
-        .header h1 { margin: 0; color: #00A67E; }
-        .container { display: flex; padding: 20px; max-width: 1200px; margin: auto; }
-        .sidebar { width: 250px; background-color: #1F1F1F; padding: 15px; margin-right: 20px; border-radius: 8px; }
-        .main-content { flex-grow: 1; }
-        .card { background-color: #1F1F1F; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); }
-        .card h2 { color: #00A67E; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .portfolio-value { font-size: 2.5em; font-weight: bold; color: #FFFFFF; }
-        .change-indicator { font-size: 1.2em; margin-top: 5px; color: #00A67E; } /* 模擬綠色上漲 */
-        .stock-list { list-style: none; padding: 0; }
-        .stock-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #333; }
-        .stock-name { font-weight: bold; }
-        .stock-price { color: #00A67E; }
-        .nav-link { display: block; color: #E0E0E0; text-decoration: none; padding: 10px; margin-bottom: 5px; border-radius: 4px; transition: background-color 0.3s; }
-        .nav-link:hover { background-color: #333; }
+        /* 基本設置 */
+        body { 
+            font-family: 'Roboto', sans-serif; /* 使用 Roboto 字體 */
+            margin: 0; 
+            padding: 0; 
+            background-color: #0d1117; /* 更深的背景色，類似 GitHub Dark */
+            color: #c9d1d9; /* 淺灰色文字 */
+            line-height: 1.6;
+        }
+
+        /* 標題區 */
+        .header { 
+            background-color: #161b22; /* 比背景稍深的顏色 */
+            padding: 20px 40px; /* 增加左右內邊距 */
+            border-bottom: 2px solid #2ea043; /* 綠色強調線 */
+            display: flex;
+            justify-content: space-between; /* 標題和導航分隔 */
+            align-items: center;
+        }
+        .header h1 { 
+            margin: 0; 
+            color: #2ea043; /* 綠色強調 */
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+        .header nav a {
+            color: #c9d1d9;
+            text-decoration: none;
+            margin-left: 25px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .header nav a:hover {
+            color: #2ea043;
+        }
+
+        /* 主容器 */
+        .container { 
+            display: flex; 
+            padding: 30px 40px; /* 增加內邊距 */
+            max-width: 1400px; /* 增加最大寬度 */
+            margin: auto; 
+            gap: 30px; /* 增加元素間隙 */
+        }
+        
+        /* 側邊欄 */
+        .sidebar { 
+            width: 280px; /* 稍微增加寬度 */
+            background-color: #161b22; 
+            padding: 20px; 
+            border-radius: 10px; /* 圓角 */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); /* 更明顯的陰影 */
+        }
+        .sidebar h2 { 
+            color: #2ea043; 
+            margin-top: 0; 
+            border-bottom: 1px solid #30363d; /* 分隔線顏色 */
+            padding-bottom: 15px; 
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+        .nav-link { 
+            display: flex; /* 讓圖標和文字對齊 */
+            align-items: center;
+            color: #c9d1d9; 
+            text-decoration: none; 
+            padding: 12px 15px; 
+            margin-bottom: 8px; 
+            border-radius: 6px; 
+            transition: background-color 0.3s ease, color 0.3s ease; 
+        }
+        .nav-link:hover { 
+            background-color: #2ea043; /* hover 時背景變綠 */
+            color: #ffffff;
+        }
+        .nav-link svg { /* 圖標樣式 */
+            margin-right: 10px;
+            fill: currentColor; /* 讓圖標顏色和文字顏色一致 */
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 主要內容區 */
+        .main-content { 
+            flex-grow: 1; 
+            display: grid; /* 使用 Grid 佈局 */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 響應式網格 */
+            gap: 30px; /* 網格間隙 */
+        }
+        
+        /* 卡片樣式 */
+        .card { 
+            background-color: #161b22; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); 
+            display: flex;
+            flex-direction: column;
+        }
+        .card h2 { 
+            color: #2ea043; 
+            margin-top: 0; 
+            border-bottom: 1px solid #30363d; 
+            padding-bottom: 12px; 
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+        .portfolio-value { 
+            font-size: 3em; /* 更大的字體 */
+            font-weight: 700; 
+            color: #ffffff; /* 白色更突出 */
+            margin-bottom: 5px;
+        }
+        .change-indicator { 
+            font-size: 1.3em; 
+            margin-top: 0; 
+            display: flex;
+            align-items: center;
+        }
+        .change-indicator.positive { color: #2ea043; } /* 上漲綠色 */
+        .change-indicator.negative { color: #f85149; } /* 下跌紅色 */
+        .change-arrow { margin-right: 5px; } /* 箭頭間距 */
+
+        /* 股票列表 */
+        .stock-list { 
+            list-style: none; 
+            padding: 0; 
+            margin: 0;
+            flex-grow: 1; /* 讓列表佔滿空間 */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around; /* 項目之間均勻分佈 */
+        }
+        .stock-item { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 12px 0; 
+            border-bottom: 1px dashed #30363d; 
+            align-items: center;
+        }
+        .stock-item:last-child {
+            border-bottom: none; /* 最後一個項目沒有底線 */
+        }
+        .stock-name { 
+            font-weight: 500; 
+            font-size: 1.1em;
+            color: #ffffff;
+        }
+        .stock-price { 
+            font-size: 1.1em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        .stock-price.positive { color: #2ea043; }
+        .stock-price.negative { color: #f85149; }
+        .stock-change { font-size: 0.9em; margin-left: 8px; color: #8b949e; } /* 變化百分比 */
+
+        /* 按鈕樣式 */
+        .action-button { 
+            background-color: #2ea043; 
+            color: white; 
+            padding: 12px 20px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 1em;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            margin-top: 15px;
+        }
+        .action-button:hover {
+            background-color: #27933a;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                padding: 20px;
+            }
+            .sidebar {
+                width: auto;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            .main-content {
+                grid-template-columns: 1fr; /* 單列佈局 */
+            }
+        }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <h1>模擬投資平台 (Stake Clone)</h1>
+        <h1>模擬投資平台</h1>
+        <nav>
+            <a href="#">首頁</a>
+            <a href="#">關於我們</a>
+            <a href="#">聯繫</a>
+        </nav>
     </header>
 
     <div class="container">
         <aside class="sidebar">
             <h2>功能選單</h2>
-            <a href="#" class="nav-link">🏠 儀表板</a>
-            <a href="#" class="nav-link">💼 我的投資組合</a>
-            <a href="#" class="nav-link">📈 交易市場 (模擬)</a>
-            <a href="#" class="nav-link">💲 存款/提款 (模擬)</a>
-            <a href="#" class="nav-link">⚙️ 帳戶設定</a>
+            <a href="#" class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                儀表板
+            </a>
+            <a href="#" class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                我的投資組合
+            </a>
+            <a href="#" class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 13H8v-2h8v2zm-4 4H8v-2h4v2zM12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                交易市場
+            </a>
+            <a href="#" class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                存款/提款
+            </a>
+            <a href="#" class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 11.5c.83 0 1.5-.67 1.5-1.5S12.83 8.5 12 8.5 10.5 9.17 10.5 10s.67 1.5 1.5 1.5zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31c-1.35 1.06-3.05 1.69-4.9 1.69zm6.31-2.09L5.69 5.69c1.35-1.06 3.05-1.69 4.9-1.69 4.41 0 8 3.59 8 8 0 1.85-.63 3.55-1.69 4.9z"/></svg>
+                帳戶設定
+            </a>
         </aside>
 
         <main class="main-content">
             <div class="card">
                 <h2>總投資組合價值</h2>
                 <div class="portfolio-value">$15,489.25</div>
-                <div class="change-indicator">+ $350.12 (2.31%) 今日</div>
-                <p style="font-size: 0.9em; color: #A0A0A0;">上次更新: 2025/11/30 15:00</p>
+                <div class="change-indicator positive">
+                    <span class="change-arrow">▲</span> <span id="todayChangeValue">+ $350.12</span> (<span id="todayChangePercent">2.31%</span>) 今日
+                </div>
+                <p style="font-size: 0.9em; color: #8b949e;">上次更新: <span id="lastUpdate">2025/11/30 15:00</span></p>
             </div>
 
             <div class="card">
                 <h2>我的持股 (模擬數據)</h2>
-                <ul class="stock-list">
-                    <li class="stock-item">
-                        <span class="stock-name">AAPL (蘋果)</span>
-                        <span class="stock-price">$185.30 (+1.5%)</span>
-                    </li>
-                    <li class="stock-item">
-                        <span class="stock-name">TSLA (特斯拉)</span>
-                        <span class="stock-price">$220.75 (-0.8%)</span>
-                    </li>
-                    <li class="stock-item">
-                        <span class="stock-name">GOOGL (谷歌)</span>
-                        <span class="stock-price">$142.10 (+3.0%)</span>
-                    </li>
-                    <li class="stock-item">
-                        <span class="stock-name">MSFT (微軟)</span>
-                        <span class="stock-price">$410.50 (+0.2%)</span>
-                    </li>
-                </ul>
+                <ul class="stock-list" id="stockList">
+                    </ul>
+                <button class="action-button">查看所有持股</button>
             </div>
 
             <div class="card">
-                <h2>待辦事項 (模擬)</h2>
-                <p>您有 2 筆待審核的限價買入訂單。</p>
-                <button style="background-color: #00A67E; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">查看訂單</button>
+                <h2>最新動態</h2>
+                <p style="color: #8b949e;">您有 2 筆限價買入訂單正在等待成交。</p>
+                <p style="color: #8b949e;">最新成交: 買入 10 股 TSLA @ $219.50。</p>
+                <button class="action-button">查看交易紀錄</button>
+            </div>
+
+            <div class="card">
+                <h2>市場新聞 (模擬)</h2>
+                <p style="color: #8b949e;">分析師預計蘋果 (AAPL) 明年營收將創新高。</p>
+                <p style="color: #8b949e;">特斯拉 (TSLA) 電動皮卡 Cybertruck 交車數量不及預期。</p>
+                <button class="action-button">閱讀更多新聞</button>
             </div>
         </main>
     </div>
 
+    <script>
+        // 模擬的股票數據
+        let stocks = [
+            { symbol: 'AAPL', name: '蘋果', price: 185.30, change: 1.5, changeType: 'positive' },
+            { symbol: 'TSLA', name: '特斯拉', price: 220.75, change: -0.8, changeType: 'negative' },
+            { symbol: 'GOOGL', name: '谷歌', price: 142.10, change: 3.0, changeType: 'positive' },
+            { symbol: 'MSFT', name: '微軟', price: 410.50, change: 0.2, changeType: 'positive' },
+            { symbol: 'AMZN', name: '亞馬遜', price: 150.00, change: -0.5, changeType: 'negative' }
+        ];
+
+        // 總投資組合價值
+        let totalPortfolioValue = 15489.25;
+        let todayChangeAmount = 350.12;
+        let todayChangePercent = 2.31;
+        let lastUpdateTime = new Date();
+
+        function formatCurrency(value) {
+            return `$${value.toFixed(2)}`;
+        }
+
+        function updateStockList() {
+            const stockListElement = document.getElementById('stockList');
+            stockListElement.innerHTML = ''; // 清空現有列表
+
+            stocks.forEach(stock => {
+                const li = document.createElement('li');
+                li.className = 'stock-item';
+
+                const changeClass = stock.changeType === 'positive' ? 'positive' : 'negative';
+                const changeArrow = stock.changeType === 'positive' ? '▲' : '▼';
+
+                li.innerHTML = `
+                    <span class="stock-name">${stock.symbol} (${stock.name})</span>
+                    <span class="stock-price ${changeClass}">
+                        ${formatCurrency(stock.price)}
+                        <span class="stock-change">(${changeArrow}${Math.abs(stock.change).toFixed(2)}%)</span>
+                    </span>
+                `;
+                stockListElement.appendChild(li);
+            });
+        }
+
+        function updatePortfolioSummary() {
+            document.querySelector('.portfolio-value').textContent = formatCurrency(totalPortfolioValue);
+            const changeIndicator = document.querySelector('.change-indicator');
+            const changeArrowElement = changeIndicator.querySelector('.change-arrow');
+            
+            if (todayChangeAmount >= 0) {
+                changeIndicator.className = 'change-indicator positive';
+                changeArrowElement.textContent = '▲';
+                document.getElementById('todayChangeValue').textContent = `+ ${formatCurrency(todayChangeAmount)}`;
+            } else {
+                changeIndicator.className = 'change-indicator negative';
+                changeArrowElement.textContent = '▼';
+                document.getElementById('todayChangeValue').textContent = `- ${formatCurrency(Math.abs(todayChangeAmount))}`;
+            }
+            document.getElementById('todayChangePercent').textContent = `${Math.abs(todayChangePercent).toFixed(2)}%`;
+
+            // 更新時間
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = now.toLocaleString('zh-Hant', { 
+                year: 'numeric', month: '2-digit', day: '2-digit', 
+                hour: '2-digit', minute: '2-digit', hour12: false 
+            });
+        }
+
+        // 模擬數據變動的函數
+        function simulateMarketChanges() {
+            // 模擬股票價格和漲跌幅
+            stocks.forEach(stock => {
+                const randomChange = (Math.random() - 0.5) * 2; // -1 到 +1 之間
+                const percentageChange = randomChange * 0.01; // 0.01% 到 1% 的變動
+
+                stock.price *= (1 + percentageChange);
+                stock.change = percentageChange * 100;
+                stock.changeType = stock.change >= 0 ? 'positive' : 'negative';
+            });
+
+            // 重新計算總投資組合價值 (簡化：假設總值隨機變動)
+            const randomPortfolioChange = (Math.random() - 0.5) * 500; // 投資組合隨機變動
+            totalPortfolioValue += randomPortfolioChange;
+            todayChangeAmount = randomPortfolioChange; // 簡化為今日變化量
+            todayChangePercent = (todayChangeAmount / (totalPortfolioValue - todayChangeAmount)) * 100; // 簡化為今日變化百分比
+
+            // 更新顯示
+            updateStockList();
+            updatePortfolioSummary();
+        }
+
+        // 初始化顯示
+        updateStockList();
+        updatePortfolioSummary();
+
+        // 每隔 5 秒模擬一次市場變動
+        setInterval(simulateMarketChanges, 5000); // 每 5 秒更新一次
+    </script>
 </body>
 </html>
