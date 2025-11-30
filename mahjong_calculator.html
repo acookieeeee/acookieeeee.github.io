@@ -25,11 +25,12 @@
         .input-field {
             border-radius: 0.5rem;
             border: 2px solid #334155; /* Slate-700 */
-            padding: 0.75rem;
+            padding: 0.5rem; /* 手機上縮小 padding */
             width: 100%;
             transition: border-color 0.2s, background-color 0.2s;
             background-color: #1e293b; /* Slate-800 */
             color: #f8fafc; /* Light text */
+            font-size: 1rem; /* 手機上適當字體大小 */
         }
         .input-field:focus {
             border-color: #f59e0b; /* Amber/Gold accent */
@@ -42,38 +43,82 @@
             background-color: #1e293b;
             color: #d1d5db;
         }
+        /* 針對 Range Slider 的樣式微調 (Tailwind 難以覆蓋的部分) */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #334155;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+            border-radius: 4px;
+        }
+
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #f59e0b;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #f59e0b;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
     </style>
 </head>
-<body class="p-4 md:p-8 min-h-screen">
+<body class="p-4 md:p-8 min-h-screen flex flex-col">
 
-    <div class="container mx-auto">
-        <!-- 更新主標題 -->
-        <h1 class="text-3xl font-bold text-center text-amber-400 mb-8">🀄 麻將帳務計算器 | Mahjong Counting Machine 💰</h1>
+    <div class="container mx-auto flex-grow">
+        
+        <!-- 回首頁按鈕 -->
+        <div class="mb-4">
+            <a href="index.html" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-amber-400 transition">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                回首頁 (Index)
+            </a>
+        </div>
+        
+        <!-- 更新主標題 - 調整響應式字體大小 -->
+        <h1 class="text-2xl sm:text-3xl font-bold text-center text-amber-400 mb-6 sm:mb-8">🀄 麻將帳務計算器 | Mahjong Counting Machine 💰</h1>
         
         <!-- 規則說明卡片 - 已美化 -->
-        <div class="card bg-gray-900 p-6 mb-6 border border-blue-700/30">
-            <h2 class="text-xl font-extrabold text-blue-300 mb-4 border-b border-blue-800 pb-2">📋 計分規則確認 (5/5 撲克牌點數制)</h2>
+        <div class="card bg-gray-900 p-4 sm:p-6 mb-6 border border-blue-700/30">
+            <h2 class="text-lg sm:text-xl font-extrabold text-blue-300 mb-4 border-b border-blue-800 pb-2">📋 計分規則確認 (5/5 撲克牌點數制)</h2>
             <ul class="space-y-3">
-                <!-- 項目列表美化，使用 Flex 佈局和圖標 -->
-                <li class="flex items-start text-gray-300">
+                <li class="flex items-start text-gray-300 text-sm sm:text-base">
                     <span class="text-blue-400 mr-3 mt-1">★</span>
                     <div>
                         <strong class="text-amber-300">底注：</strong> 1 點 = 5 元。
                     </div>
                 </li>
-                <li class="flex items-start text-gray-300">
+                <li class="flex items-start text-gray-300 text-sm sm:text-base">
                     <span class="text-blue-400 mr-3 mt-1">★</span>
                     <div>
                         <strong class="text-amber-300">滿點：</strong> 每人起始點數為 100 點 (A-10=1~10點, JQK=15點, 共 13 張牌)。
                     </div>
                 </li>
-                <li class="flex items-start text-gray-300">
+                <li class="flex items-start text-gray-300 text-sm sm:text-base">
                     <span class="text-blue-400 mr-3 mt-1">★</span>
                     <div>
                         <strong class="text-amber-300">輸贏計算：</strong> 結算點數差額 * 5 元。
                     </div>
                 </li>
-                <li class="flex items-start text-gray-300">
+                <li class="flex items-start text-gray-300 text-sm sm:text-base">
                     <span class="text-blue-400 mr-3 mt-1">★</span>
                     <div>
                         <strong class="text-amber-300">台費分攤：</strong> 總台費平均分給 4 人。
@@ -82,23 +127,33 @@
             </ul>
         </div>
 
-        <!-- 總台費輸入卡片 (原 1.) -->
-        <div class="card bg-gray-800 p-6 mb-6">
+        <!-- 總台費輸入卡片 (改為滑軌) -->
+        <div class="card bg-gray-800 p-4 sm:p-6 mb-6">
             <h2 class="text-xl font-semibold text-amber-400 mb-4">💸 總台費金額</h2>
-            <label for="totalFee" class="block text-sm font-medium text-gray-300 mb-2">請輸入總台費 (元)</label>
-            <input type="number" id="totalFee" value="200" min="0" class="input-field text-lg" oninput="calculateSettlement()">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <label for="totalFeeRange" class="block text-sm font-medium text-gray-300 flex-shrink-0">請選擇總台費 (元)</label>
+                <!-- 顯示當前值 -->
+                <div id="totalFeeDisplay" class="text-3xl font-extrabold text-amber-300 flex-shrink-0">200 元</div>
+            </div>
+            
+            <input type="range" id="totalFeeRange" min="0" max="500" step="5" value="200" 
+                   class="mt-3" oninput="updateFeeDisplay(this.value); calculateSettlement()">
+            
+            <!-- 隱藏的數字輸入欄位，僅供 JS 讀取 -->
+            <input type="hidden" id="totalFee" value="200">
         </div>
         
         <!-- 玩家結餘點數輸入卡片 (原 2.) -->
-        <div class="card bg-gray-800 p-6 mb-6">
+        <div class="card bg-gray-800 p-4 sm:p-6 mb-6">
             <h2 class="text-xl font-semibold text-amber-400 mb-4">🃏 玩家結餘點數 (起始 100 點)</h2>
-            <div id="playerInputs" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- 調整 grid 間距和列數 -->
+            <div id="playerInputs" class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                 <!-- 輸入欄位會由 JS 生成 -->
             </div>
         </div>
 
         <!-- 台費墊付人卡片 (原 3.) -->
-        <div class="card bg-gray-800 p-6 mb-8">
+        <div class="card bg-gray-800 p-4 sm:p-6 mb-8">
             <h2 class="text-xl font-semibold text-amber-400 mb-4">🛡️ 台費墊付人</h2>
             <!-- 修正：改用 grid grid-cols-4 實現平均分佈欄寬 -->
             <div id="feePayer" class="grid grid-cols-4 gap-3">
@@ -107,10 +162,10 @@
         </div>
         
         <!-- 結算結果卡片 (原 4.) -->
-        <div class="card bg-green-900/30 p-6 border-2 border-green-700/50">
-            <h2 class="text-2xl font-bold text-green-400 mb-4">💵 最終帳務結果 (即時更新)</h2>
+        <div class="card bg-green-900/30 p-4 sm:p-6 border-2 border-green-700/50">
+            <h2 class="text-xl sm:text-2xl font-bold text-green-400 mb-4">💵 最終帳務結果 (即時更新)</h2>
             
-            <div id="resultsSummary" class="text-lg mb-2 space-y-3">
+            <div id="resultsSummary" class="text-base sm:text-lg mb-2 space-y-3">
                 <!-- 結果摘要會由 JS 顯示 -->
                 <p class="text-gray-400">請輸入點數和台費資訊，結果將自動更新。</p>
             </div>
@@ -118,12 +173,11 @@
 
         <!-- 複製訊息框 -->
         <div class="mt-8">
-            <!-- 移除不必要的描述文字 -->
-            <h3 class="text-xl font-semibold text-gray-200 mb-3">✅ 群組轉帳訊息</h3> <!-- 標題已修改 -->
+            <h3 class="text-xl font-semibold text-gray-200 mb-3">✅ 群組轉帳訊息</h3>
             <textarea id="copyTextOutput" rows="8" readonly class="w-full p-4 border border-gray-700 rounded-lg text-sm focus:outline-none"></textarea>
-            <!-- 更改按鈕文字 -->
+            
             <button onclick="copyToClipboard()" class="w-full mt-2 bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-3 rounded-lg transition duration-200 shadow-lg">
-                複製訊息 <!-- 按鈕文字已修改 -->
+                複製訊息
             </button>
         </div>
         
@@ -131,6 +185,12 @@
         <div id="notification"></div>
         
     </div>
+    
+    <!-- 頁腳版本號 - 已更新 -->
+    <footer class="mt-12 py-4 text-center text-gray-500 text-sm border-t border-gray-800">
+        版本號: v1.0.0.2
+    </footer>
+
 
     <script>
         // 玩家清單
@@ -138,7 +198,7 @@
         const POINT_VALUE = 5; // 1 點 = 5 元
         const STARTING_POINTS = 100; // 每人滿點
 
-        // 初始化輸入欄位和付費人選項
+        // 頁面載入時初始化
         document.addEventListener('DOMContentLoaded', () => {
             const playerInputsDiv = document.getElementById('playerInputs');
             const feePayerDiv = document.getElementById('feePayer');
@@ -147,16 +207,15 @@
                 // 點數輸入欄位
                 playerInputsDiv.innerHTML += `
                     <div>
-                        <!-- 增強玩家名字的顯示效果 -->
-                        <label for="points_${name}" class="block text-sm font-medium text-gray-300 mb-2">
-                            <span class="text-lg font-extrabold text-amber-300">${name}</span> 結餘點數
+                        <label for="points_${name}" class="block text-xs sm:text-sm font-medium text-gray-300 mb-1">
+                            <span class="text-base sm:text-lg font-extrabold text-amber-300">${name}</span> 點數
                         </label>
-                        <!-- 修正：移除 max 限制，因為贏錢會超過 100 點 -->
-                        <input type="number" id="points_${name}" value="${STARTING_POINTS}" min="0" class="input-field text-xl text-center" oninput="calculateSettlement()">
+                        <input type="number" id="points_${name}" value="${STARTING_POINTS}" min="0" 
+                               class="input-field text-lg text-center" oninput="calculateSettlement()">
                     </div>
                 `;
 
-                // 台費付費人選項 - 使用磚形按鈕樣式
+                // 台費付費人選項
                 feePayerDiv.innerHTML += `
                     <div class="relative">
                         <input 
@@ -169,8 +228,8 @@
                             onchange="calculateSettlement()"
                         >
                         <label for="payer_${name}" class="
-                            block py-2 px-6 rounded-lg cursor-pointer text-base font-semibold
-                            transition-all duration-200 select-none text-center w-full /* 確保填滿 grid cell */
+                            block py-2 px-3 sm:px-6 rounded-lg cursor-pointer text-sm sm:text-base font-semibold
+                            transition-all duration-200 select-none text-center w-full
                             bg-gray-700 text-gray-400 border border-gray-600 
                             peer-checked:bg-amber-500 peer-checked:text-gray-900 peer-checked:border-amber-500
                             hover:bg-gray-600 hover:text-gray-200
@@ -182,24 +241,30 @@
             });
             
             // 首次載入時執行計算
+            updateFeeDisplay(document.getElementById('totalFeeRange').value);
             calculateSettlement();
         });
+        
+        // 更新滑軌顯示值，並同步到隱藏的數字輸入欄位
+        function updateFeeDisplay(value) {
+            document.getElementById('totalFeeDisplay').textContent = `${value} 元`;
+            document.getElementById('totalFee').value = value;
+        }
 
         function calculateSettlement() {
+            // 從隱藏的數字輸入欄位（已與滑軌同步）獲取值
             const totalFee = parseFloat(document.getElementById('totalFee').value) || 0;
             const feeShare = totalFee / 4;
-            // 確保有選中付費人，否則默認第一個
+            
             const payerRadio = document.querySelector('input[name="payer"]:checked');
             const payerName = payerRadio ? payerRadio.value : PLAYERS[0];
             
             const results = [];
-            let totalRemainingPoints = 0;
             
             // 1. 計算遊戲輸贏點數和金額
             PLAYERS.forEach(name => {
                 const inputElement = document.getElementById(`points_${name}`);
                 const remainingPoints = parseInt(inputElement ? inputElement.value : STARTING_POINTS) || 0;
-                totalRemainingPoints += remainingPoints;
 
                 const pointsNet = remainingPoints - STARTING_POINTS;
                 const gameSettlement = pointsNet * POINT_VALUE; // 遊戲結算金額
@@ -235,7 +300,7 @@
             // 3. 顯示結果摘要 (包含點數守恆驗證)
             displayResults(results, totalFee, feeShare);
 
-            // 4. 生成轉帳指令 (還原簡潔版本)
+            // 4. 生成轉帳指令
             generateCopyText(results, payerName, totalFee);
         }
 
@@ -250,13 +315,13 @@
             if (totalPointsInput !== expectedTotalPoints) {
                 // 如果點數不等於 400 點，顯示警告
                 deviationText = `<p class="text-sm text-red-400 font-medium bg-red-900/50 p-2 rounded-lg">
-                                  ⚠️ **點數驗證失敗**：總結餘點數為 ${totalPointsInput}，與應有總和 400 不符！請檢查輸入。
+                                  ⚠️ **點數驗證失敗**：總結餘點數為 ${totalPointsInput}，與應有總和 ${expectedTotalPoints} 不符！請檢查輸入。
                                 </p>`;
             }
 
 
             summaryDiv.innerHTML = `
-                <p class="text-lg text-gray-300 font-medium">總台費：${totalFee.toFixed(0)} 元，每人應分攤：${feeShare.toFixed(0)} 元</p>
+                <p class="text-base sm:text-lg text-gray-300 font-medium">總台費：${totalFee.toFixed(0)} 元，每人應分攤：${feeShare.toFixed(0)} 元</p>
                 <hr class="my-3 border-green-700/50">
                 ${deviationText}
             `;
@@ -269,14 +334,16 @@
                 
                 // 遊戲結算金額和台費分攤的顯示
                 const feeSign = p.isPayer ? '+' : '-';
-                const feeDisplay = p.isPayer ? `${(totalFee - feeShare).toFixed(0)} (收回墊付)` : `${feeShare.toFixed(0)} (付台費)`;
-                
+                // 確保台費調整金額為非負數
+                const feeAdjDisplay = p.isPayer ? Math.abs(totalFee - feeShare).toFixed(0) : feeShare.toFixed(0); 
+                const feeDetail = p.isPayer ? `收回墊付` : `付台費`;
+
                 summaryDiv.innerHTML += `
-                    <p class="flex justify-between items-center text-gray-300">
+                    <p class="flex justify-between items-center text-sm sm:text-base text-gray-300">
                         <span class="font-semibold">${p.name} (${p.isPayer ? '已墊付' : '未墊付'}):</span>
-                        <span class="${colorClass}">
+                        <span class="${colorClass} text-right">
                             ${action} ${finalAmount.toFixed(0)} 元
-                            <span class="text-xs text-gray-500 ml-2">(${sign}${Math.abs(p.gameSettlement).toFixed(0)} 遊戲 ${feeSign} ${feeDisplay})</span>
+                            <span class="text-xs text-gray-500 ml-1 sm:ml-2 whitespace-nowrap">(${sign}${Math.abs(p.gameSettlement).toFixed(0)} 遊戲 ${feeSign} ${feeAdjDisplay} ${feeDetail})</span>
                         </span>
                     </p>
                 `;
@@ -289,7 +356,7 @@
             const debtors = results.filter(p => p.finalSettlement < 0).sort((a, b) => a.finalSettlement - b.finalSettlement);
             const creditors = results.filter(p => p.finalSettlement > 0).sort((a, b) => b.finalSettlement - a.finalSettlement);
 
-            // --- 還原為簡潔的純文本格式 ---
+            // --- 生成簡潔的純文本格式 ---
             let copyText = `
 --- 💰 牌局帳務報告 ---
 
