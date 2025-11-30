@@ -350,22 +350,21 @@
             });
         }
 
+        // 優化 LINE 訊息排版的核心函數
         function generateCopyText(results, payerName, totalFee) {
             
             // 整理需要付款和收款的人
             const debtors = results.filter(p => p.finalSettlement < 0).sort((a, b) => a.finalSettlement - b.finalSettlement);
             const creditors = results.filter(p => p.finalSettlement > 0).sort((a, b) => b.finalSettlement - a.finalSettlement);
 
-            // --- 生成簡潔的純文本格式 ---
-            let copyText = `
---- 💰 牌局帳務報告 ---
-
-📅 日期: ${new Date().toLocaleDateString('zh-Hant')}
-💰 總台費: ${totalFee.toFixed(0)} 元 (每人分攤: ${(totalFee/4).toFixed(0)} 元)
-✅ 台費墊付人: ${payerName}
-
---- 個人最終應收/付 ---
-`;
+            // --- 生成更適合聊天軟體的簡潔純文本格式 ---
+            let copyText = `【💰 牌局帳務報告】\n`;
+            copyText += `📅 日期: ${new Date().toLocaleDateString('zh-Hant')}\n`;
+            copyText += `---------------------------------\n`;
+            copyText += `💵 總台費: ${totalFee.toFixed(0)} 元 (每人: ${(totalFee/4).toFixed(0)} 元)\n`;
+            copyText += `🛡️ 墊付人: ${payerName}\n`;
+            copyText += `---------------------------------\n`;
+            copyText += `\n【個人結算】\n`; // 增加單一換行，分隔主體
 
             results.forEach(p => {
                 const amount = Math.abs(p.finalSettlement).toFixed(0);
@@ -374,7 +373,7 @@
                 copyText += `${emoji} ${p.name}: ${action} ${amount} 元\n`;
             });
 
-            copyText += '\n--- 轉帳建議 (最少次數) ---\n';
+            copyText += `\n【轉帳建議 (最少次數)】\n`;
 
             // 實施轉帳最小化邏輯
             const settlementInstructions = [];
@@ -417,8 +416,8 @@
                  copyText += '✅ 帳務已平，無需轉帳！';
             }
 
-
-            copyText += `\n\n--- 結算完成，感謝使用！ ---`;
+            // 根據使用者要求，替換最後一句話，並移除前面的分隔線
+            copyText += `\n 結算完成 感謝使用`;
 
             document.getElementById('copyTextOutput').value = copyText.trim();
         }
