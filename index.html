@@ -3,77 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>牌局小工具總覽 | Game Tools Hub</title>
-    <!-- 引入 Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>大學生求生工具</title>
+    <!-- 引入 Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 保持與計算器頁面一致的深色質感 */
+        /* 自定義字體和顏色，提升質感 */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0f172a; /* Slate-900 */
+            color: #f8fafc;
         }
         .container {
-            max-width: 900px;
+            max-width: 1000px;
         }
         .tool-card {
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            background-color: #1e293b; /* Slate-800 */
-            border: 1px solid #334155;
             border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            /* 響應式調整卡片高度，確保內容不會溢出，特別是待開發的卡片 */
+            min-height: 220px; /* 手機上較短 */
         }
         .tool-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.2), 0 8px 10px -6px rgba(245, 158, 11, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.2);
         }
-        .icon-bg {
-            background-color: #f59e0b; /* Amber accent */
+
+        /* 桌面視圖下調整卡片高度 */
+        @media (min-width: 768px) {
+            .tool-card {
+                min-height: 250px;
+            }
         }
     </style>
 </head>
-<body class="p-4 md:p-8 min-h-screen flex flex-col items-center justify-center">
+<body class="p-4 md:p-10 min-h-screen flex flex-col">
 
     <div class="container mx-auto flex-grow">
-        <h1 class="text-4xl font-extrabold text-center text-amber-400 mb-12">
-            🎲 小工具中心
-        </h1>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            
-            <!-- 麻將計算器連結卡片 -->
-            <a href="mahjong_calculator.html" class="tool-card p-6 block hover:ring-2 hover:ring-amber-500">
-                <div class="icon-bg w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                    <span class="text-2xl text-gray-900">🀄</span>
-                </div>
-                <h2 class="text-xl font-bold text-gray-100 mb-2">麻將帳務計算器</h2>
-                <p class="text-gray-400">即時輸入點數，自動結算輸贏與轉帳建議。</p>
+        <!-- 標題 --><h1 class="text-3xl sm:text-5xl font-extrabold text-center text-amber-400 mb-8 sm:mb-12">
+            📚 大學生求生工具 🛠️
+        </h1>
+        <!-- 移除副標題 --><!-- 工具列表 --><!-- 調整 grid 布局，手機一列，桌面兩列，減少擁擠 --><div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+
+            <!-- 工具卡片 1: 麻將計算機 --><a href="mahjong_calculator.html" class="tool-card bg-gray-800 hover:bg-gray-700/80 p-6 flex flex-col items-center justify-center text-center">
+                <span class="text-6xl mb-3">🀄</span>
+                <h2 class="text-2xl font-bold text-amber-300 mb-2">麻將帳務計算機</h2>
+                <p class="text-gray-400 text-sm sm:text-base">快速結算牌局輸贏點數與台費，並提供最小轉帳次數建議。</p>
+                <div class="mt-4 px-4 py-1 bg-amber-600 rounded-full text-gray-900 font-semibold text-sm">點擊進入</div>
             </a>
             
-            <!-- 預留未來的小工具卡片範例 -->
-            <div class="tool-card p-6 opacity-50 cursor-not-allowed">
-                <div class="icon-bg w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                    <span class="text-2xl text-gray-900">⏱️</span>
-                </div>
-                <h2 class="text-xl font-bold text-gray-400 mb-2">牌局計時器 (待開發)</h2>
-                <p class="text-gray-500">用於限時思考或休息提醒。</p>
+            <!-- 工具卡片 2: 隨機輪盤決定晚餐 --><div class="tool-card bg-gray-800/50 p-6 flex flex-col items-center justify-center text-center cursor-not-allowed opacity-60">
+                <span class="text-6xl mb-3">🎲</span>
+                <h2 class="text-2xl font-bold text-gray-400 mb-2">晚餐隨機輪盤</h2>
+                <p class="text-gray-500 text-sm sm:text-base">（開發中）專治選擇困難症，今日晚餐由它決定！</p>
+                <div class="mt-4 px-4 py-1 bg-gray-600 rounded-full text-gray-300 font-semibold text-sm">即將推出</div>
+            </div>
+
+            <!-- 工具卡片 3: 期末倒數計時 (Placeholder) --><div class="tool-card bg-gray-800/50 p-6 flex flex-col items-center justify-center text-center cursor-not-allowed opacity-60">
+                <span class="text-6xl mb-3">⏰</span>
+                <h2 class="text-2xl font-bold text-gray-400 mb-2">期末倒數計時</h2>
+                <p class="text-gray-500 text-sm sm:text-base">（開發中）追蹤考試和報告的截止日期。</p>
+                <div class="mt-4 px-4 py-1 bg-gray-600 rounded-full text-gray-300 font-semibold text-sm">即將推出</div>
             </div>
             
-            <div class="tool-card p-6 opacity-50 cursor-not-allowed">
-                <div class="icon-bg w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                    <span class="text-2xl text-gray-900">📝</span>
-                </div>
-                <h2 class="text-xl font-bold text-gray-400 mb-2">規則速查表 (待開發)</h2>
-                <p class="text-gray-500">快速查詢各種台數的計算方法。</p>
-            </div>
-
         </div>
-        
     </div>
-
-    <!-- 版本更新資訊 -->
-    <footer class="mt-16 text-center text-gray-500 text-sm">
-        <p>版本更新號：v1.0.0.2</p>
-    </footer>
     
+    <!-- 頁腳版本號 --><footer class="mt-12 py-4 text-center text-gray-500 text-sm border-t border-gray-800">
+        版本號: v1.0.0.3
+    </footer>
 </body>
 </html>
