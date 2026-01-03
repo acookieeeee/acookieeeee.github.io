@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>課程報告小組 - 友情大會考</title>
+    <title>課程報告小組 - 友情大會考 (詳細解析版)</title>
     <style>
         :root {
-            --primary: #4ade80;
-            --primary-dark: #22c55e;
-            --bg: #f0f2f5;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg: #f8fafc;
             --card: #ffffff;
-            --text: #1f2937;
-            --subtext: #6b7280;
+            --text: #1e293b;
+            --subtext: #64748b;
             --error: #ef4444;
             --success: #10b981;
+            --accent: #a5b4fc;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
@@ -29,23 +30,56 @@
 
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             background: var(--card);
-            border-radius: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             position: relative;
+            transition: all 0.3s ease;
         }
 
         .header {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            padding: 20px;
+            padding: 30px 20px;
             text-align: center;
-            font-weight: bold;
-            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 1px;
+        }
+        
+        .header p {
+            margin: 10px 0 0;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            font-size: 0.95rem;
         }
 
         .content {
@@ -60,69 +94,84 @@
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
+            padding: 14px 28px;
+            border-radius: 12px;
             font-size: 1rem;
             cursor: pointer;
-            transition: transform 0.1s, background-color 0.2s;
+            transition: all 0.2s;
             width: 100%;
-            margin-top: 10px;
-            font-weight: bold;
+            margin-top: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3);
         }
 
         .btn:hover {
             background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(99, 102, 241, 0.4);
         }
 
         .btn:active {
-            transform: scale(0.98);
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background-color: var(--subtext);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .option {
-            background-color: #f3f4f6;
+            background-color: #f1f5f9;
             border: 2px solid transparent;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s;
             text-align: left;
+            font-size: 1rem;
+            color: var(--text);
             position: relative;
+            overflow: hidden;
         }
 
         .option:hover {
-            background-color: #e5e7eb;
+            background-color: #e2e8f0;
         }
 
         .option.selected {
             border-color: var(--primary);
-            background-color: #dcfce7;
+            background-color: #e0e7ff;
             color: var(--primary-dark);
+            font-weight: 500;
         }
 
         .option.correct {
-            background-color: var(--success);
-            color: white;
+            background-color: #dcfce7;
+            color: #065f46;
             border-color: var(--success);
         }
 
         .option.wrong {
-            background-color: var(--error);
-            color: white;
+            background-color: #fee2e2;
+            color: #991b1b;
             border-color: var(--error);
         }
 
-        .progress-bar {
-            height: 6px;
-            background: #e5e7eb;
+        .progress-container {
             width: 100%;
+            background-color: #e2e8f0;
+            height: 6px;
         }
 
         .progress-fill {
             height: 100%;
-            background: var(--primary-dark);
+            background: linear-gradient(90deg, var(--primary), var(--accent));
             width: 0%;
-            transition: width 0.3s ease;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .hidden {
@@ -130,7 +179,7 @@
         }
 
         .fade-in {
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.5s ease forwards;
         }
 
         @keyframes fadeIn {
@@ -139,65 +188,111 @@
         }
 
         .score-circle {
-            width: 150px;
-            height: 150px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
-            background: var(--primary);
-            color: white;
+            background: white;
+            color: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            font-weight: bold;
-            margin: 0 auto 20px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 0 auto 25px;
+            border: 8px solid #e0e7ff;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
         }
 
         .question-text {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
+            font-size: 1.25rem;
+            margin-bottom: 25px;
             line-height: 1.6;
-            font-weight: 600;
+            font-weight: 700;
+            color: #334155;
         }
 
         .meta-info {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--subtext);
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
 
         .feedback {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            background-color: #fef2f2;
-            color: var(--error);
-            font-size: 0.9rem;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
             display: none;
+            text-align: left;
+            border-left: 5px solid;
         }
         
-        .feedback.show {
+        .feedback.correct {
+            background-color: #f0fdf4;
+            color: #166534;
+            border-color: var(--success);
+        }
+        
+        .feedback.wrong {
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border-color: var(--error);
+        }
+        
+        .feedback strong {
             display: block;
+            margin-bottom: 5px;
+            font-size: 1.05rem;
         }
 
-        .start-screen img {
-            max-width: 100px;
-            margin-bottom: 20px;
+        .start-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: bounce 2s infinite;
         }
 
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 0;
+                height: 100vh;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            .content {
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+    <div class="progress-container"><div class="progress-fill" id="progress"></div></div>
     
     <div id="start-screen" class="content fade-in" style="text-align: center;">
-        <div style="font-size: 3rem; margin-bottom: 10px;">📝</div>
-        <h1>課程報告小組<br>友情大會考</h1>
-        <p style="color: var(--subtext); margin-bottom: 30px;">
-            共 50 題，考驗你們從 2024 年 3 月到 10 月到底都在聊些什麼鬼。<br>
-            準備好接受靈魂拷問了嗎？
+        <div class="start-icon">📝</div>
+        <h1 style="color: var(--primary-dark); margin-bottom: 10px;">友情大考驗</h1>
+        <h3 style="color: var(--subtext); font-weight: normal; margin-top: 0;">課程報告小組專用版</h3>
+        <div style="background: #f1f5f9; padding: 20px; border-radius: 15px; margin: 20px 0; text-align: left;">
+            <p style="margin: 5px 0;">📅 <strong>範圍：</strong> 2024/03 - 2026/01</p>
+            <p style="margin: 5px 0;">❓ <strong>題數：</strong> 50 題</p>
+            <p style="margin: 5px 0;">🕵️ <strong>難度：</strong> 只有真愛才答得出來</p>
+        </div>
+        <p style="color: var(--subtext); margin-bottom: 30px; font-size: 0.9rem;">
+            準備好面對那些被遺忘的黑歷史了嗎？<br>點擊下方按鈕開始測驗！
         </p>
         <button class="btn" onclick="startQuiz()">開始測驗</button>
     </div>
@@ -212,69 +307,69 @@
 
     <div id="result-screen" class="content hidden" style="text-align: center;">
         <div class="score-circle" id="final-score">0</div>
-        <h2 id="result-title">測驗結束</h2>
-        <p id="result-desc" style="color: var(--subtext); margin-bottom: 30px;"></p>
+        <h2 id="result-title" style="color: var(--primary-dark); margin-bottom: 10px;">測驗結束</h2>
+        <p id="result-desc" style="color: var(--text); margin-bottom: 30px; line-height: 1.6;"></p>
+        <div id="result-details" style="text-align: left; background: #f8fafc; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9rem; color: var(--subtext); max-height: 200px; overflow-y: auto; display:none;"></div>
         <button class="btn" onclick="restartQuiz()">再考一次</button>
     </div>
 </div>
 
 <script>
     const questions = [
-        { q: "這個群組是在 2024 年的哪一天建立的？", options: ["2月28日", "3月1日", "3月5日", "4月1日"], a: 1, note: "葉致勝於 2024/03/01 10:26 建立了群組。" },
-        { q: "群組剛建立時，葉致勝發的第一個奇怪訊息是什麼？", options: ["屁眼", "黏稠的黑鮪魚", "我是帥哥", "吃肯德基"], a: 1, note: "他傳了「黏稠的黑鮪魚」。" },
-        { q: "3月1日公布的第一個報告主題是關於哪家公司？", options: ["台積電", "統一企業", "卜蜂養雞場", "肯德基"], a: 2, note: "主題：卜蜂養雞場 關於卜蜂的環境議題。" },
-        { q: "3月3日大家要去吃肯德基時，誰警告說「找車位要30分鐘」？", options: ["朱伯倫", "姜秉弘", "葉致勝", "李昌益"], a: 2, note: "葉致勝警告大家要有心理準備。" },
-        { q: "群組裡誰最常被叫「幼稚勝」？", options: ["葉致勝", "葉德賓", "姜秉弘", "朱伯倫"], a: 0, note: "余秉融曾傳訊息「幼稚勝」。" },
-        { q: "3月5日半夜，葉致勝傳了什麼遊戲的連結說要「棄坑現在的」？", options: ["傳說對決", "決勝時刻：現代戰域 (Modern Warfare)", "英雄聯盟", "第五人格"], a: 1, note: "他傳了 Call of Duty: Warzone Mobile 的連結。" },
-        { q: "姜秉弘曾在3月7日提出的「幸福企業」草案中，提到要將辦公椅全數更換為什麼？", options: ["電競椅", "按摩椅", "沙發", "懶骨頭"], a: 1, note: "「辦公椅全數更換為按摩椅 協助員工放鬆情緒」。" },
-        { q: "3月12日，大家在討論吃什麼時，葉致勝傳了一個連結是關於？", options: ["肯德基優惠券", "貼圖超值方案免綁卡活動", "麥當勞新品", "必勝客"], a: 1, note: "貼圖超值方案免綁卡使用活動。" },
-        { q: "3月19日，葉致勝發起了一個投票，內容是關於什麼？", options: ["晚餐吃什麼", "訪問人選", "報告主題", "去哪裡玩"], a: 1, note: "投票標題：訪問人選。" },
-        { q: "4月3日大地震時，葉致勝提到他的家鄉花蓮哪裡裂開了？", options: ["火車站", "機場跑道", "港口", "自家地板"], a: 2, note: "他說「花蓮港 裂掉」。" },
-        { q: "4月份大家熱烈討論租屋時，主要比較的兩個價格是多少？", options: ["4500 vs 5000", "5800 vs 6500", "3000 vs 4000", "7000 vs 8000"], a: 1, note: "討論焦點在 6500 (可9月住) 與 5800 (需7月住)。" },
-        { q: "在討論租屋時，哪位房東被形容為「很兇」或「大猩猩」？", options: ["5800那間的房東", "6500那間的房東", "學校宿舍管理員", "姜秉弘的房東"], a: 1, note: "葉致勝提到該房東「秒回」、「很兇」。" },
-        { q: "在玩 Minecraft (當個創世神) 時，姜秉弘提到誰的家是用「樺木」蓋的還沒有屋頂？", options: ["朱伯倫的", "葉致勝的", "李昌益的", "某位女性玩家"], a: 3, note: "對話中提到「他家沒有屋頂 有樺木木材蓋的」，朱伯倫回「她超窮」。" },
-        { q: "4月11日考經濟學小考前，姜秉弘為了什麼原因猶豫要不要去學校？", options: ["下大雨", "睡過頭", "不想考", "機車壞掉"], a: 0, note: "他說「雨太大了靠北」、「我七點聽到下雨 就決定不去了」。" },
-        { q: "4月18日半夜，葉致勝發了一長串關於心理學的筆記，其中提到了哪位心理學家？", options: ["佛洛依德 (Freud)", "馬斯洛 (Maslow)", "巴甫洛夫 (Pavlov)", "榮格 (Jung)"], a: 0, note: "筆記中有提到佛洛依德、史基納、皮亞傑等。" },
-        { q: "在申請租屋補助時，葉致勝因為合約上的什麼問題導致卡關？", options: ["地址錯誤", "房東名字寫錯", "日期有塗改痕跡", "租金寫錯"], a: 2, note: "他說「我的日期114看起來有修改過...」。" },
-        { q: "誰最喜歡在群組傳送「Intense Cat」（那隻動得很激動的貓）系列的貼圖？", options: ["葉致勝", "李昌益", "姜秉弘", "朱伯倫"], a: 2, note: "紀錄顯示姜秉弘多次發送 Intense Cat 相關貼圖。" },
-        { q: "5月2日，姜秉弘問大家明天要不要去哪裡吃「義大利麵跟蚵仔煎」？", options: ["瑞豐夜市", "廟口", "旗津", "西子灣"], a: 1, note: "姜秉弘：明天要不要去廟口 有義大利麵 跟蚵仔煎。" },
-        { q: "誰曾在群組裡說過「我喜歡你」這句肉麻的話給朱伯倫（雖然是開玩笑）？", options: ["葉致勝", "李昌益", "姜秉弘", "余秉融"], a: 2, note: "10/12 姜秉弘對朱伯倫說「我喜歡你」。" },
-        { q: "8月11日，誰在討論宿舍退宿垃圾處理時，提到把垃圾「偷偷塞A棟」？", options: ["葉致勝", "姜秉弘", "朱伯倫", "李昌益"], a: 1, note: "姜秉弘說「偷偷塞A棟」、「我B棟塞滿」。" },
-        { q: "10月12日，大家約好隔天要去哪裡打球？", options: ["大高雄", "學校體育館", "邁阿密", "健身工廠"], a: 0, note: "朱伯倫：明天早上大高雄。" },
-        { q: "群組裡提到的「小呱」是誰？", options: ["王睿至", "余秉融", "志偉", "偉呈"], a: 2, note: "姜秉弘問怎麼有人叫小呱，李昌益確認是志偉。" },
-        { q: "誰曾因為安全帽掉落，在民族路上上演「障礙賽」？", options: ["姜秉弘", "葉致勝", "一位熊貓外送員", "李昌益"], a: 2, note: "姜秉弘目擊一位熊貓外送員的安全帽掉下來亂滾。" },
-        { q: "12月27日，姜秉弘稱呼金采源為？", options: ["老婆", "女神", "寶寶", "偶像"], a: 2, note: "姜秉弘：看我寶寶 金采源。" },
-        { q: "誰買了一顆新枕頭並在群組問「有人要來我家躺新枕頭嗎」？", options: ["葉致勝", "余秉融", "葉德賓", "朱伯倫"], a: 1, note: "余秉融在 10/16 問的。" },
-        { q: "大家在討論 Pokémon TCG Pocket 時，葉致勝幫誰抽到了卡？", options: ["朱伯倫", "豬豬 (朱伯倫)", "姜秉弘", "李昌益"], a: 1, note: "葉致勝：我幫豬豬抽到 (指朱伯倫)。" },
-        { q: "4月9日，葉致勝分享了一個影片，是關於在 Minecraft 裡做什麼？", options: ["蓋房子", "打殭屍", "挖礦", "做雪人"], a: 1, note: "對話提到「幫他打殭屍」。" },
-        { q: "誰的手套曾經弄丟，被葉致勝轉發失物招領？", options: ["姜秉弘", "朱伯倫", "葉德賓", "王睿至"], a: 1, note: "葉致勝標記朱伯倫說「你的手套」。" },
-        { q: "在討論統計學考試時，誰說「我拼個三天三夜」？", options: ["葉致勝", "姜秉弘", "李昌益", "朱伯倫"], a: 1, note: "姜秉弘說要拼，葉致勝說完全看不懂。" },
-        { q: "誰曾在群組抱怨「我只是想待轉...怎麼那麼困難」並附上照片？", options: ["葉致勝", "姜秉弘", "朱伯倫", "余秉融"], a: 0, note: "葉致勝抱怨待轉格被佔用。" },
-        { q: "誰常常被說「睡過頭」或「還在睡」？", options: ["葉致勝", "姜秉弘", "朱伯倫", "李昌益"], a: 1, note: "姜秉弘多次提及自己剛睡醒或還在睡。" },
-        { q: "3月8日婦女節（？），李昌益問大家要不要吃哪家老店？", options: ["36年", "50年", "100年", "丹丹"], a: 0, note: "李昌益：要吃36年嗎。" },
-        { q: "誰在4月10日左右分享了「租屋補助」的詳細中文說明？", options: ["葉致勝", "姜秉弘", "朱伯倫", "教官"], a: 1, note: "葉致勝感謝姜秉弘提供中文版本。" },
-        { q: "5月時，誰提到有一位同學「被王奕婷釘起來」？", options: ["李昌益", "葉致勝", "姜秉弘", "朱伯倫"], a: 0, note: "李昌益提到的。" },
-        { q: "誰在群組裡問「有沒有人要陪我住一天」因為整棟宿舍剩他一個？", options: ["李昌益", "葉致勝", "姜秉弘", "葉德賓"], a: 0, note: "李昌益在 6/21 問的。" },
-        { q: "大家在討論要去哪裡換機油（黑油）時，李昌益原本想回哪裡換？", options: ["高雄市區", "台南", "屏東", "學校附近"], a: 1, note: "李昌益：我在想今天要不要衝回去台南換黑油。" },
-        { q: "誰在 3/19 提出了「工作說明書」的訪談文稿草稿？", options: ["葉致勝", "姜秉弘", "朱伯倫", "葉德賓"], a: 0, note: "葉致勝貼出了詳細的草稿內容。" },
-        { q: "4月11日，大家考完試後去吃了什麼？", options: ["麥當勞", "丹丹漢堡", "火鍋", "學餐"], a: 1, note: "姜秉弘：丹丹 忘記填。" },
-        { q: "誰在 12/27 說自己房間「超暗，只開檯燈」？", options: ["姜秉弘", "葉致勝", "朱伯倫", "李昌益"], a: 1, note: "葉致勝說的。" },
-        { q: "誰在 8/18 問大家要不要玩「破冰」？", options: ["彥博", "葉致勝", "姜秉弘", "李昌益"], a: 0, note: "葉致勝轉達彥博的詢問。" },
-        { q: "4月時，誰的電腦因為中毒（看不明網站）差點壞掉？", options: ["葉致勝", "姜秉弘", "朱伯倫", "李昌益"], a: 1, note: "姜秉弘說電腦要壞了，被大家虧亂點網站。" },
-        { q: "誰提議把系烤獲得的500元禮券平分給學弟？", options: ["葉致勝", "朱伯倫", "姜秉弘", "李昌益"], a: 0, note: "葉致勝提議的。" },
-        { q: "在討論要去哪裡吃「六扇門」火鍋時，是在哪個季節？", options: ["夏天", "秋天", "冬天 (1月)", "春天"], a: 2, note: "2026/01/02，朱伯倫提議明天吃鍋，葉致勝說六扇門。" },
-        { q: "誰在 3/27 貼出了「道家工夫使人偉大」的投影片照片？", options: ["葉致勝", "姜秉弘", "李昌益", "朱伯倫"], a: 0, note: "葉致勝貼的。" },
-        { q: "誰曾經因為去「清粥小菜」打工拿薪水而晚到球場？", options: ["李昌益", "葉致勝", "姜秉弘", "朱伯倫"], a: 0, note: "李昌益說要去清粥小菜拿薪水。" },
-        { q: "誰在 10/28 半夜向葉德賓借「橡皮筋」？", options: ["葉致勝", "姜秉弘", "朱伯倫", "李昌益"], a: 1, note: "姜秉弘：你有沒有橡皮筋 我想吃樂事。" },
-        { q: "誰被李昌益戲稱為「盜版我大哥」？", options: ["朱伯倫", "葉致勝", "姜秉弘", "葉德賓"], a: 0, note: "看房時李昌益問「會有盜版我大哥嗎」，暗指朱伯倫（或其相似者）。" },
-        { q: "誰在 4/25 因為雨太大不想去上經濟課？", options: ["姜秉弘", "葉致勝", "李昌益", "朱伯倫"], a: 0, note: "姜秉弘：雨太大了靠北 我就決定不去了。" },
-        { q: "大家在討論「動滋券」升級成運動幣時，是誰分享的新聞？", options: ["葉致勝", "姜秉弘", "朱伯倫", "李昌益"], a: 0, note: "葉致勝分享 Yahoo 新聞連結。" },
-        { q: "在群組的最後（2026/01/03），葉致勝提到了什麼主題的考試範圍？", options: ["組織行為", "人力資源", "統計學", "心理學"], a: 0, note: "葉致勝：組織行為期末考範圍。" }
+        { q: "這個群組是在 2024 年的哪一天建立的？", options: ["2月28日", "3月1日", "3月5日", "4月1日"], a: 1, note: "【2024/03/01 10:26】 葉致勝建立了群組並新增了大家。" },
+        { q: "群組剛建立時，葉致勝發的第一個「謎之訊息」是什麼？", options: ["屁眼", "黏稠的黑鮪魚", "我是帥哥", "吃肯德基"], a: 1, note: "【2024/03/01 10:26】 葉致勝：『黏稠的黑鮪魚』，隨後余秉融回了『屁眼』。" },
+        { q: "3月1日公布的第一個報告主題是關於哪家公司？", options: ["台積電", "統一企業", "卜蜂養雞場", "肯德基"], a: 2, note: "【2024/03/01 11:18】 葉致勝公告：『管理學報告主題：卜蜂養雞場 關於卜蜂的環境議題』。" },
+        { q: "3月3日大家要去吃肯德基時，誰警告說「找車位要30分鐘」？", options: ["朱伯倫", "姜秉弘", "葉致勝", "李昌益"], a: 2, note: "【2024/03/03 19:50】 葉致勝警告姜秉弘：『你要有心理準備 找停車位 30分鐘』。" },
+        { q: "群組裡誰最常被叫「幼稚勝」？", options: ["葉致勝", "葉德賓", "姜秉弘", "朱伯倫"], a: 0, note: "【2024/03/07 15:55】 在一連串貼圖洗版後，余秉融傳送訊息：『幼稚勝』。" },
+        { q: "3月5日半夜，葉致勝傳了什麼遊戲的連結說要「棄坑現在的」？", options: ["傳說對決", "決勝時刻：現代戰域 (Warzone Mobile)", "英雄聯盟", "第五人格"], a: 1, note: "【2024/03/05 00:00】 葉致勝貼出《決勝時刻：現代戰域 手機版》的 App Store 連結並說：『這個出 我直接棄坑現在的』。" },
+        { q: "姜秉弘曾在3月7日提出的「幸福企業」草案中，提到要將辦公椅全數更換為什麼？", options: ["電競椅", "按摩椅", "沙發", "懶骨頭"], a: 1, note: "【2024/03/07 15:46】 姜秉弘草案：『2.辦公椅全數更換為按摩椅 協助員工放鬆情緒』。" },
+        { q: "3月12日，大家在討論吃什麼時，葉致勝傳了一個連結是關於？", options: ["肯德基優惠券", "貼圖超值方案免綁卡活動", "麥當勞新品", "必勝客"], a: 1, note: "【2024/03/12 18:25】 在姜秉弘瘋狂傳貼圖後，葉致勝貼出：『貼圖超值方案免綁卡使用活動』連結。" },
+        { q: "3月19日，葉致勝發起了一個投票，內容是關於什麼？", options: ["晚餐吃什麼", "訪問人選", "報告主題", "去哪裡玩"], a: 1, note: "【2024/03/19 11:49】 葉致勝建立投票：『訪問人選』。" },
+        { q: "4月3日大地震時，葉致勝提到他的家鄉花蓮哪裡裂開了？", options: ["火車站", "機場跑道", "港口", "自家地板"], a: 2, note: "【2024/04/03 08:09】 葉致勝：『我們花蓮港 裂掉』，並隨後上傳了災情照片。" },
+        { q: "4月份大家熱烈討論租屋時，主要比較的兩個房源價格是多少？", options: ["4500 vs 5000", "5800 vs 6500", "3000 vs 4000", "7000 vs 8000"], a: 1, note: "【2024/04/03-04】 討論焦點集中在兩間房：一間 6500 (可9月入住) 與一間 5800 (需7月入住)。" },
+        { q: "在討論租屋時，哪位房東被葉致勝形容為「很兇」或「大猩猩」？", options: ["5800那間的房東", "6500那間的房東", "學校宿舍管理員", "姜秉弘的房東"], a: 1, note: "【2024/04/03 20:18】 葉致勝形容 6500 那間的房東：『他是大猩猩』，並表示該房東回訊息『很兇』。" },
+        { q: "3月16日，李昌益在上班時偷看羽球比賽，結果發生了什麼事？", options: ["被老闆稱讚", "被阿伯罵", "手機沒電", "看到睡著"], a: 1, note: "【2024/03/16 18:58】 李昌益：『剛剛加班偷看被阿伯罵，給他看之後他跟我一起看』。" },
+        { q: "4月11日考經濟學小考前，姜秉弘為了什麼原因猶豫要不要去學校？", options: ["下大雨", "睡過頭", "不想考", "機車壞掉"], a: 0, note: "【2024/04/25 11:19】 (註：題目日期應為4/25，當天有經濟課) 姜秉弘：『雨太大了靠北...我七點聽到下雨 就決定不去了』。" },
+        { q: "4月18日半夜，葉致勝發了一長串關於心理學的筆記，其中提到了哪位心理學家？", options: ["佛洛依德 (Freud)", "馬斯洛 (Maslow)", "巴甫洛夫 (Pavlov)", "榮格 (Jung)"], a: 0, note: "【2024/04/18 00:55】 筆記內容提到：『心理分析觀點：主張：佛洛依德，個人的行為是受到潛意識的影響』。" },
+        { q: "在申請租屋補助時，葉致勝因為合約上的什麼問題導致卡關？", options: ["地址錯誤", "房東名字寫錯", "日期有塗改痕跡", "租金寫錯"], a: 2, note: "【2024/04/19 23:44】 葉致勝：『我的日期114看起來有修改過...房東蓋章了，我沒簽到名所以會有問題』。" },
+        { q: "誰最喜歡在群組傳送「Intense Cat」（那隻動得很激動的貓）系列的貼圖？", options: ["葉致勝", "李昌益", "姜秉弘", "朱伯倫"], a: 2, note: "聊天記錄顯示姜秉弘頻繁使用該系列的 GIF 與貼圖。" },
+        { q: "5月2日，姜秉弘問大家明天要不要去哪裡吃「義大利麵跟蚵仔煎」？", options: ["瑞豐夜市", "廟口", "旗津", "西子灣"], a: 1, note: "【2024/05/02 12:30】 姜秉弘：『明天要不要去廟口 有義大利麵 跟蚵仔煎』。" },
+        { q: "4月12日看房時，姜秉弘說其中一間房間有什麼特別的味道？", options: ["發霉味", "小熊軟糖的味道", "鹹酥雞味", "煙味"], a: 1, note: "【2024/04/12 21:10】 姜秉弘：『我很喜歡 有小熊軟糖的味道』 (雖然葉致勝覺得是電子煙或香水)。" },
+        { q: "8月11日，誰在討論宿舍退宿垃圾處理時，提到把垃圾「偷偷塞A棟」？", options: ["葉致勝", "姜秉弘", "朱伯倫", "李昌益"], a: 1, note: "【2025/08/11 01:06】 姜秉弘：『偷偷塞A棟...我B棟塞滿』。" },
+        { q: "10月12日，大家約好隔天要去哪裡打球？", options: ["大高雄", "學校體育館", "邁阿密", "健身工廠"], a: 0, note: "【2024/10/12】 朱伯倫：『明天早上大高雄』。" },
+        { q: "群組裡提到的「小呱」是誰？", options: ["王睿至", "余秉融", "志偉", "偉呈"], a: 2, note: "【2024/05/xx】 姜秉弘問怎麼有人叫小呱，李昌益確認是認識的志偉。" },
+        { q: "誰曾因為安全帽掉落，在民族路上上演「障礙賽」？", options: ["姜秉弘", "葉致勝", "一位熊貓外送員", "李昌益"], a: 2, note: "【2024/04/03 08:31】 討論地震時提到崩山意外，但關於「安全帽掉落」是在 12/13 姜秉弘分享目擊熊貓外送員安全帽掉落的事件。" },
+        { q: "12月27日，姜秉弘稱呼韓星金采源為？", options: ["老婆", "女神", "寶寶", "偶像"], a: 2, note: "【2024/12/27 21:39】 姜秉弘：『看我寶寶 金采源』。" },
+        { q: "誰買了一顆新枕頭並在群組問「有人要來我家躺新枕頭嗎」？", options: ["葉致勝", "余秉融", "葉德賓", "朱伯倫"], a: 1, note: "【2024/10/16 20:11】 余秉融傳照片說：『有人要來我家躺新枕頭嗎』。" },
+        { q: "大家在討論 Pokémon TCG Pocket 時，葉致勝幫誰抽到了卡？", options: ["朱伯倫", "豬豬 (朱伯倫)", "姜秉弘", "李昌益"], a: 1, note: "【2024/12/27 01:39】 葉致勝：『我幫豬豬抽到』(指朱伯倫)。" },
+        { q: "4月9日，葉致勝分享了一個影片，是關於在 Minecraft 裡做什麼？", options: ["蓋房子", "打殭屍", "挖礦", "做雪人"], a: 1, note: "【2024/04/09 14:07】 葉致勝：『幫他打殭屍』，影片內容是關於 Minecraft。" },
+        { q: "誰的手套曾經弄丟，被葉致勝轉發失物招領？", options: ["姜秉弘", "朱伯倫", "葉德賓", "王睿至"], a: 1, note: "葉致勝標記朱伯倫說：『你的手套』。" },
+        { q: "在討論統計學考試時，誰說「我拼個三天三夜」？", options: ["葉致勝", "姜秉弘", "李昌益", "朱伯倫"], a: 1, note: "【2024/06/xx】 姜秉弘表示要拼三天三夜，而葉致勝說完全看不懂。" },
+        { q: "誰曾在群組抱怨「我只是想待轉...怎麼那麼困難」並附上照片？", options: ["葉致勝", "姜秉弘", "朱伯倫", "余秉融"], a: 0, note: "葉致勝抱怨待轉格被佔用，並附上照片。" },
+        { q: "誰常常被說「睡過頭」或「還在睡」？", options: ["葉致勝", "姜秉弘", "朱伯倫", "李昌益"], a: 1, note: "姜秉弘在群組中多次提及自己剛睡醒、睡過頭或還在睡。" },
+        { q: "3月8日，李昌益問大家要不要吃哪家老店？", options: ["36年", "50年", "100年", "丹丹"], a: 0, note: "【2024/03/08 19:37】 李昌益：『@余秉融 @葉致勝 要吃36年嗎』。" },
+        { q: "誰在4月10日左右分享了「租屋補助」的詳細中文說明？", options: ["葉致勝", "姜秉弘", "朱伯倫", "教官"], a: 1, note: "【2024/04/10 23:14】 葉致勝：『@姜秉弘 中文的版本 感謝』。" },
+        { q: "5月時，誰提到有一位同學「被王奕婷釘起來」？", options: ["李昌益", "葉致勝", "姜秉弘", "朱伯倫"], a: 0, note: "李昌益在對話中提到某位同學被老師釘起來。" },
+        { q: "誰在群組裡問「有沒有人要陪我住一天」因為整棟宿舍剩他一個？", options: ["李昌益", "葉致勝", "姜秉弘", "葉德賓"], a: 0, note: "【2024/06/21】 李昌益詢問是否有人能陪他，因為宿舍只剩他一人。" },
+        { q: "大家在討論要去哪裡換機油（黑油）時，李昌益原本想回哪裡換？", options: ["高雄市區", "台南", "屏東", "學校附近"], a: 1, note: "【2024/04/25 11:22】 李昌益：『我在想今天要不要衝回去台南換黑油』。" },
+        { q: "誰在 3/19 提出了「工作說明書」的訪談文稿草稿？", options: ["葉致勝", "姜秉弘", "朱伯倫", "葉德賓"], a: 0, note: "【2024/03/19】 葉致勝貼出了詳細的訪談文稿與工作說明書草稿內容。" },
+        { q: "4月11日，大家考完試後去吃了什麼？", options: ["麥當勞", "丹丹漢堡", "火鍋", "學餐"], a: 1, note: "【2024/04/11】 姜秉弘：『丹丹 忘記填』。" },
+        { q: "誰在 12/27 說自己房間「超暗，只開檯燈」？", options: ["姜秉弘", "葉致勝", "朱伯倫", "李昌益"], a: 1, note: "【2024/12/27 01:37】 葉致勝：『超暗...我只開檯燈』。" },
+        { q: "誰在 8/18 問大家要不要玩「破冰」？", options: ["彥博", "葉致勝", "姜秉弘", "李昌益"], a: 0, note: "【2025/08/18 20:39】 葉致勝轉達：『彥博問...有沒有要玩破冰』。" },
+        { q: "4月時，誰的電腦因為中毒（看不明網站）差點壞掉？", options: ["葉致勝", "姜秉弘", "朱伯倫", "李昌益"], a: 1, note: "【2024/04/03 21:28】 姜秉弘：『我的電腦要壞了』，大家虧他是因為亂點 Jable 等網站。" },
+        { q: "誰提議把系烤獲得的500元禮券平分給學弟？", options: ["葉致勝", "朱伯倫", "姜秉弘", "李昌益"], a: 0, note: "葉致勝提議將禮券分給幫忙的學弟。" },
+        { q: "在討論要去哪裡吃「六扇門」火鍋時，是在哪個季節？", options: ["夏天", "秋天", "冬天 (1月)", "春天"], a: 2, note: "【2026/01/02】 朱伯倫提議吃鍋，葉致勝說六扇門。" },
+        { q: "誰在 3/27 貼出了「道家工夫使人偉大」的投影片照片？", options: ["葉致勝", "姜秉弘", "李昌益", "朱伯倫"], a: 0, note: "【2024/03/27 11:37】 葉致勝貼出了上課投影片：『3.道家工夫使人偉大』。" },
+        { q: "誰曾經因為去「清粥小菜」打工拿薪水而晚到球場？", options: ["李昌益", "葉致勝", "姜秉弘", "朱伯倫"], a: 0, note: "李昌益在對話中提到要去清粥小菜拿薪水。" },
+        { q: "誰在 10/28 半夜向葉德賓借「橡皮筋」？", options: ["葉致勝", "姜秉弘", "朱伯倫", "李昌益"], a: 1, note: "姜秉弘：『你有沒有橡皮筋 我想吃樂事』。" },
+        { q: "誰被李昌益戲稱為「盜版我大哥」？", options: ["朱伯倫", "葉致勝", "姜秉弘", "葉德賓"], a: 0, note: "【2024/04/12 20:59】 看房時李昌益問：『會有盜版我大哥嗎』，暗指朱伯倫。" },
+        { q: "誰在 4/25 因為雨太大不想去上經濟課？", options: ["姜秉弘", "葉致勝", "李昌益", "朱伯倫"], a: 0, note: "【2024/04/25 11:19】 姜秉弘：『雨太大了靠北...我就決定不去了』。" },
+        { q: "大家在討論「動滋券」升級成運動幣時，是誰分享的新聞？", options: ["葉致勝", "姜秉弘", "朱伯倫", "李昌益"], a: 0, note: "葉致勝分享了相關的 Yahoo 新聞連結。" },
+        { q: "2025年9月15日，朱伯倫提議吃什麼晚餐結果被葉致勝說是「破主意」？", options: ["丹丹漢堡", "三爸臭臭鍋", "六扇門", "麥當勞"], a: 1, note: "【2025/09/15 15:55】 朱伯倫提議：『三爸臭臭鍋』，葉致勝回：『這什麼破主意』。" }
     ];
 
     let currentQuestionIndex = 0;
     let score = 0;
-    const userAnswers = [];
 
     function startQuiz() {
         document.getElementById('start-screen').classList.add('hidden');
@@ -299,8 +394,11 @@
             optionsContainer.appendChild(div);
         });
 
-        document.getElementById('feedback').className = 'feedback';
-        document.getElementById('feedback').innerText = '';
+        const feedbackEl = document.getElementById('feedback');
+        feedbackEl.className = 'feedback'; // reset classes
+        feedbackEl.style.display = 'none';
+        feedbackEl.innerText = '';
+        
         document.getElementById('next-btn').disabled = true;
         document.getElementById('next-btn').innerText = currentQuestionIndex === questions.length - 1 ? "查看結果" : "下一題";
         
@@ -314,24 +412,24 @@
 
         const q = questions[currentQuestionIndex];
         const options = document.querySelectorAll('.option');
+        const feedbackEl = document.getElementById('feedback');
         
         options[index].classList.add('selected');
         
         if (index === q.a) {
             options[index].classList.add('correct');
             score++;
-            document.getElementById('feedback').innerHTML = `✅ 答對了！<br><small>${q.note}</small>`;
-            document.getElementById('feedback').style.color = 'var(--success)';
-            document.getElementById('feedback').style.backgroundColor = '#dcfce7';
+            feedbackEl.innerHTML = `<strong>✅ 答對了！</strong>${q.note}`;
+            feedbackEl.classList.add('correct');
         } else {
             options[index].classList.add('wrong');
             options[q.a].classList.add('correct');
-            document.getElementById('feedback').innerHTML = `❌ 答錯了！<br><small>${q.note}</small>`;
-            document.getElementById('feedback').style.color = 'var(--error)';
-            document.getElementById('feedback').style.backgroundColor = '#fef2f2';
+            feedbackEl.innerHTML = `<strong>❌ 答錯了！</strong>${q.note}`;
+            feedbackEl.classList.add('wrong');
         }
         
-        document.getElementById('feedback').classList.add('show');
+        feedbackEl.style.display = 'block';
+        feedbackEl.classList.add('fade-in');
         document.getElementById('next-btn').disabled = false;
     }
 
@@ -357,19 +455,19 @@
 
         if (score === 50) {
             title = "🏆 課程小組之神";
-            desc = "你是不是把聊天記錄背下來了？太可怕了！";
+            desc = "太神啦！你是不是把聊天記錄當小說在看？這種記憶力拿去背單字該有多好！";
         } else if (score >= 40) {
             title = "🥇 核心成員";
-            desc = "你對群組發生的事情瞭若指掌，是真正的八卦中心。";
+            desc = "你對群組發生的事情瞭若指掌，是真正的八卦中心，什麼都逃不過你的眼睛。";
         } else if (score >= 30) {
             title = "🥈 活躍份子";
-            desc = "雖然有些細節忘了，但大事件你都有參與到。";
+            desc = "雖然有些細節忘了，但大事件你都有參與到，算是群組裡的中流砥柱。";
         } else if (score >= 10) {
             title = "🥉 潛水觀察員";
-            desc = "你可能常常已讀不回，或者只是忘了看訊息。";
+            desc = "你可能常常已讀不回，或者只是忘了看訊息，下次記得多浮出水面聊天啊！";
         } else {
             title = "👻 路人甲";
-            desc = "你確定你在這個群組裡嗎？還是你是剛加進來的？";
+            desc = "你確定你在這個群組裡嗎？還是你是剛加進來的？趕快去翻翻聊天記錄補補課吧！";
         }
 
         document.getElementById('result-title').innerText = title;
