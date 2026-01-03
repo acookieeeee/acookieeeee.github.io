@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>課程報告小組：地獄級友情大測驗</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --success-color: #27ae60;
+            --error-color: #e74c3c;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #666;
+        }
+
+        .question-card {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .question-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        @media (min-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .option-label {
+            display: block;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .option-label:hover {
+            background: #e3f2fd;
+            border-color: var(--accent-color);
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked + .option-label {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.5em;
+            cursor: pointer;
+            margin-top: 40px;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #34495e;
+        }
+
+        .result-section {
+            display: none;
+            text-align: center;
+            margin-top: 40px;
+            animation: fadeIn 0.5s;
+        }
+
+        .score-display {
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .feedback {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .answer-key {
+            text-align: left;
+            margin-top: 40px;
+            display: none;
+        }
+
+        .key-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+
+        .key-item.correct {
+            background: rgba(39, 174, 96, 0.1);
+            border-left: 5px solid var(--success-color);
+        }
+
+        .key-item.incorrect {
+            background: rgba(231, 76, 60, 0.1);
+            border-left: 5px solid var(--error-color);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .timeline-badge {
+            display: inline-block;
+            background: #eee;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            color: #777;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>💀 課程報告小組地獄級測驗</h1>
+    <p class="intro">50道題目，涵蓋 2024-2025 年所有細節。選項非常接近，請睜大眼睛。<br>考試範圍：從「卜蜂養雞場」到「分組報告」。</p>
+
+    <form id="quiz-form">
+        <div id="questions-container"></div>
+        <button type="submit" class="submit-btn">交卷查看成績</button>
+    </form>
+
+    <div id="result" class="result-section">
+        <h2>測驗結果</h2>
+        <div class="score-display" id="score">0 / 100</div>
+        <p class="feedback" id="feedback-text"></p>
+        <div class="answer-key" id="answer-key"></div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        // 2024 March
+        { date: "2024/03/01", q: "群組剛建立時，葉致勝為了測試貼圖，傳的第一句話是什麼？", a: "黏稠的黑鮪魚", o: ["滑溜的秋刀魚", "巨大的大白鯊", "黏稠的黑鮪魚", "新鮮的鮭魚卵"] },
+        { date: "2024/03/01", q: "葉致勝發布的第一個管理學報告主題是？", a: "卜蜂養雞場", o: ["大成養雞場", "卜蜂養雞場", "統一養雞場", "卜蜂飼料廠"] },
+        { date: "2024/03/02", q: "姜秉弘感冒吃藥後，形容自己當時的狀態是？", a: "快走掉了", o: ["快死掉了", "快走掉了", "快升天了", "快往生了"] },
+        { date: "2024/03/03", q: "去肯德基的路上，葉致勝警告找停車位要有心理準備找多久？", a: "30分鐘", o: ["20分鐘", "30分鐘", "40分鐘", "1小時"] },
+        { date: "2024/03/14", q: "玩遊戲時，姜秉弘為了辯解自己0殺，說他是打什麼位置？", a: "輔助", o: ["坦克", "輔助", "法師", "補師"] },
+        { date: "2024/03/19", q: "要去樂活吃飯前，姜秉弘特別警告大家騎山路不要怎樣？", a: "不要外拋", o: ["不要壓車", "不要超車", "不要外拋", "不要急煞"] },
+        { date: "2024/03/24", q: "葉致勝忘記聯絡訪談對象，朱伯倫建議延期到何時？", a: "下禮拜", o: ["明天", "後天", "下禮拜", "這禮拜五"] },
+        { date: "2024/03/31", q: "訪談當天，聽說華哥稍後要忙著搬多少箱水果？", a: "1000箱", o: ["500箱", "800箱", "1000箱", "1200箱"] },
+        { date: "2024/03/31", q: "姜秉弘上傳偷錄音的檔案後，特別交代大家什麼？", a: "不要跟華哥講", o: ["不要跟老師講", "不要跟組員講", "不要跟華哥講", "不要傳出去"] },
+        
+        // 2024 April
+        { date: "2024/04/03", q: "花蓮大地震，葉致勝回報災情時分享了哪裡裂開的照片？", a: "花蓮港", o: ["花蓮大橋", "蘇花公路", "花蓮港", "自家牆壁"] },
+        { date: "2024/04/08", q: "葉德賓說要去高鐵載誰（綽號）？", a: "番仔", o: ["阿呆", "番仔", "胖子", "猴子"] },
+        { date: "2024/04/10", q: "Minecraft 中，姜秉弘蓋的家是用什麼木頭？", a: "樺木", o: ["橡木", "樺木", "杉木", "相思木"] },
+        { date: "2024/04/10", q: "承上題，他的家有一個什麼明顯的特徵被笑？", a: "沒有屋頂", o: ["沒有門", "沒有地板", "沒有屋頂", "只有三面牆"] },
+        { date: "2024/04/11", q: "經濟學小考最後確認是在第幾節課？", a: "第三節", o: ["第二節", "第三節", "第四節", "第五節"] },
+        { date: "2024/04/14", q: "葉致勝在加密貨幣市場做了什麼操作賺到錢？", a: "做空 Doge", o: ["做多 Doge", "做空 BTC", "做空 Doge", "做多 ETH"] },
+        { date: "2024/04/17", q: "大家去吃「哈胖」時，建議沒跟到的姜秉弘去吃什麼？", a: "烤肉和雞排", o: ["鹹酥雞和珍奶", "滷味和綠茶", "烤肉和雞排", "雞排和薯條"] },
+        { date: "2024/04/18", q: "葉致勝在群組分享了一大串哪一科的筆記？", a: "發展心理學", o: ["社會心理學", "發展心理學", "認知心理學", "變態心理學"] },
+        { date: "2024/04/20", q: "葉致勝申請租屋補助時出了什麼包？", a: "房東蓋章但他沒簽名", o: ["沒蓋章", "身分證影本模糊", "日期填錯", "房東蓋章但他沒簽名"] },
+        { date: "2024/04/20", q: "討論房租時，那間月租 5800 元的房子缺點是要從幾月開始付錢？", a: "7月", o: ["6月", "7月", "8月", "9月"] },
+
+        // 2024 June - October
+        { date: "2024/06/24", q: "葉致勝表示自己期末考進步了，分數是多少？", a: "79分", o: ["78分", "79分", "80分", "81分"] },
+        { date: "2024/06/24", q: "姜秉弘抱怨自己寫了一篇像什麼一樣的文章卻沒高分？", a: "弟子規", o: ["三字經", "弟子規", "千字文", "道德經"] },
+        { date: "2024/06/24", q: "宿舍學長「偉呈」因為做了什麼事被罵很兇殘？", a: "把別人帽子丟掉", o: ["偷別人衣服", "把別人帽子丟掉", "把別人鞋子踢飛", "偷吃別人泡麵"] },
+        { date: "2024/09/23", q: "李昌益形容當天雨天不想上課的心情，說風大到怎樣？", a: "沒媽", o: ["靠北", "沒媽", "懷疑人生", "飛起"] },
+        { date: "2024/09/23", q: "當天是誰在群組問能不能載他去學校？", a: "姜秉弘", o: ["朱伯倫", "葉致勝", "李昌益", "姜秉弘"] },
+        { date: "2024/10/08", q: "玩桌遊阿瓦隆時，李昌益特別稱讚了什麼？", a: "座位安排", o: ["遊戲流程", "座位安排", "零食準備", "場地選擇"] },
+        { date: "2024/10/28", q: "姜秉弘為了吃樂事，在群組借什麼東西？", a: "橡皮筋", o: ["迴紋針", "橡皮筋", "訂書機", "封口夾"] },
+        
+        // 2024 Nov - 2025 Feb
+        { date: "2024/11/17", q: "李昌益提到哪位朋友唱歌的音準「真的超好笑」？", a: "義兵", o: ["義寬", "義兵", "義峰", "義傑"] },
+        { date: "2024/12/29", q: "葉致勝詢問財管作業的問卷形式是不是什麼？", a: "紙本", o: ["Google表單", "紙本", "線上問卷", "口頭訪問"] },
+        { date: "2025/02/02", q: "朱伯倫遊戲抽卡抽到什麼讓他直呼「畢業了」？", a: "免費的第二包", o: ["免費的第一包", "免費的第二包", "付費的第二包", "隱藏版卡包"] },
+        { date: "2025/02/02", q: "葉致勝抱怨自己抽卡只抽到什麼？", a: "動畫", o: ["特效", "語音", "動畫", "頭像"] },
+        { date: "2025/02/03", q: "加密貨幣崩盤當天，以太幣(ETH)跌到多少讓葉致勝印象深刻？", a: "2008", o: ["2000", "1998", "2008", "2018"] },
+        { date: "2025/02/03", q: "姜秉弘起床看到幣圈崩盤，形容當時狀況是？", a: "天塌了", o: ["地裂了", "天塌了", "完了", "芭比Q了"] },
+
+        // 2025 March - Oct
+        { date: "2025/03/06", q: "早上出門時，葉致勝約定的時間是幾點？", a: "8:20", o: ["8:10", "8:15", "8:20", "8:30"] },
+        { date: "2025/05/xx", q: "打羽球時，李昌益罵對面一直在「狗叫」的男生跟旁邊女生是什麼關係？", a: "男女朋友", o: ["曖昧對象", "男女朋友", "夫妻", "兄妹"] },
+        { date: "2025/06/01", q: "葉致勝房間的什麼家電壞掉，導致東西退冰？", a: "冰箱", o: ["冷氣", "冰箱", "冷凍櫃", "除濕機"] },
+        { date: "2025/06/01", q: "姜秉弘建議葉致勝家電壞掉可以怎麼做（雖然沒用）？", a: "冷氣開強一點", o: ["拿去曬太陽", "冷氣開強一點", "放冰塊進去", "拿電風扇吹"] },
+        { date: "2025/10/12", q: "分組報告時，姜秉弘發現自己在哪一組？", a: "第一組", o: ["第一組", "第二組", "第三組", "第四組"] },
+        { date: "2025/10/12", q: "朱伯倫為了逃避隔天的課/報告，預告自己會怎樣？", a: "肚子痛", o: ["頭痛", "肚子痛", "牙齒痛", "腳痛"] },
+
+        // General / Characters
+        { date: "General", q: "群組中被稱為「番仔」的是誰？", a: "葉致勝", o: ["姜秉弘", "李昌益", "朱伯倫", "葉致勝"] },
+        { date: "General", q: "誰最常把「我沒了」、「我射了」掛在嘴邊？", a: "李昌益", o: ["姜秉弘", "葉致勝", "李昌益", "葉德賓"] },
+        { date: "General", q: "這個小組的「班代」通常是指誰？", a: "朱伯倫", o: ["葉致勝", "朱伯倫", "王睿至", "余秉融"] },
+        { date: "General", q: "誰是群組裡的「筆記大神」，常分享長篇重點？", a: "葉致勝", o: ["姜秉弘", "葉致勝", "李昌益", "朱伯倫"] },
+        { date: "General", q: "誰經常在遊戲或分組中自稱「打輔助」？", a: "姜秉弘", o: ["姜秉弘", "葉致勝", "李昌益", "朱伯倫"] },
+        { date: "General", q: "群組最常提到的南部速食店霸主是？", a: "丹丹漢堡", o: ["丹丹漢堡", "南霸天炸雞", "胖老爹", "藍蜻蜓"] },
+        { date: "2024/03/14", q: "葉德賓吐槽誰「怎麼有人0殺」？", a: "姜秉弘", o: ["葉致勝", "姜秉弘", "朱伯倫", "李昌益"] },
+        { date: "2024/04/10", q: "誰被笑說Minecraft裡「家徒四壁」還被笑窮？", a: "朱伯倫", o: ["姜秉弘", "朱伯倫", "葉致勝", "李昌益"] },
+        { date: "2025/02/02", q: "葉致勝說遊戲抽到的東西是「垃圾」還是什麼？", a: "動畫", o: ["垃圾", "廢物", "動畫", "空氣"] },
+        { date: "2025/05/xx", q: "李昌益罵羽球場那個男生的用詞是？", a: "臭gay", o: ["智障", "臭gay", "白癡", "爛人"] },
+        { date: "General", q: "這個群組的名稱在對話紀錄檔案中的標題是？", a: "課程報告小組", o: ["課程討論小組", "課程報告小組", "作業討論區", "報告分組群"] },
+        { date: "General", q: "群組建立的確切日期是？", a: "2024/03/01", o: ["2024/02/28", "2024/03/01", "2024/03/02", "2024/03/05"] }
+    ];
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function renderQuiz() {
+        const container = document.getElementById('questions-container');
+        questions.forEach((q, index) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            
+            // Shuffle options
+            let options = [...q.o];
+            shuffleArray(options);
+
+            const optionsHtml = options.map(opt => `
+                <input type="radio" name="q${index}" id="q${index}_${opt}" value="${opt}">
+                <label class="option-label" for="q${index}_${opt}">${opt}</label>
+            `).join('');
+
+            card.innerHTML = `
+                <div class="timeline-badge">${q.date}</div>
+                <div class="question-title">${index + 1}. ${q.q}</div>
+                <div class="options-grid">${optionsHtml}</div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    document.getElementById('quiz-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        let score = 0;
+        let answerHTML = '';
+        
+        questions.forEach((q, index) => {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            const userAnswer = selected ? selected.value : "未作答";
+            const isCorrect = userAnswer === q.a;
+            
+            if (isCorrect) score++;
+
+            answerHTML += `
+                <div class="key-item ${isCorrect ? 'correct' : 'incorrect'}">
+                    <strong>第 ${index + 1} 題：</strong> ${q.q}<br>
+                    <span style="color: ${isCorrect ? 'green' : 'red'}">你的答案：${userAnswer}</span><br>
+                    <span style="color: green">正確答案：${q.a}</span>
+                </div>
+            `;
+        });
+
+        document.getElementById('score').innerText = `${score * 2} / 100`;
+        
+        let feedback = "";
+        if (score === 50) feedback = "太神了！你是群組管理員吧？🙇‍♂️";
+        else if (score >= 40) feedback = "你是核心成員無誤！👍";
+        else if (score >= 30) feedback = "還不錯，有些細節忘了吧？🤔";
+        else if (score >= 10) feedback = "你是潛水員嗎？😅";
+        else feedback = "你是不是跑錯群組了？💀";
+        
+        document.getElementById('feedback-text').innerText = feedback;
+        document.getElementById('answer-key').innerHTML = answerHTML;
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('answer-key').style.display = 'block';
+        
+        // Scroll to result
+        document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Initialize
+    renderQuiz();
+</script>
+
+</body>
+</html>
