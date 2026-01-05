@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>課程報告小組 - 友情殘酷大測驗</title>
+    <title>課程報告小組 - 友情大殘酷大測驗</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
 
@@ -34,12 +34,13 @@
             justify-content: center;
             align-items: center;
             overflow-x: hidden;
+            padding: 20px;
         }
 
         .container {
-            width: 90%;
+            width: 100%;
             max-width: 600px;
-            background: rgba(30, 41, 59, 0.8);
+            background: rgba(30, 41, 59, 0.9);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 2rem;
@@ -47,6 +48,23 @@
             border: 1px solid rgba(255,255,255,0.1);
             position: relative;
             transition: all 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
         }
 
         /* Screens */
@@ -56,6 +74,7 @@
             align-items: center;
             text-align: center;
             animation: fadeIn 0.5s ease;
+            width: 100%;
         }
 
         .screen.active {
@@ -89,6 +108,8 @@
             font-weight: bold;
             transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            width: 100%;
+            max-width: 300px;
         }
 
         .btn:hover {
@@ -211,6 +232,7 @@
             background: var(--text);
             color: var(--background);
             display: none;
+            width: auto;
         }
 
         .next-btn:hover {
@@ -229,6 +251,7 @@
             opacity: 0;
             pointer-events: none;
             z-index: 100;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
 
         @keyframes scoreUp {
@@ -251,7 +274,62 @@
             background: #334155;
             padding: 0.5rem 1.5rem;
             border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        /* Wrong Answers Section */
+        .wrong-answers-section {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
             margin-bottom: 2rem;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-height: 400px;
+            overflow-y: auto;
+            display: none; /* Hidden by default */
+        }
+
+        .wrong-title {
+            color: var(--error);
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: sticky;
+            top: 0;
+        }
+
+        .wrong-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+        }
+
+        .wrong-item:last-child {
+            border-bottom: none;
+        }
+
+        .w-q {
+            font-weight: bold;
+            color: #f1f5f9;
+            margin-bottom: 0.5rem;
+        }
+
+        .w-ans {
+            color: var(--success);
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+        }
+
+        .w-exp {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.4;
         }
 
         @keyframes fadeIn {
@@ -274,7 +352,7 @@
         <p class="intro-text">
             共 31 題，每題限時 15 秒。<br>
             答題越快分數越高，錯誤會倒扣！<br>
-            這是一場關於記憶力與友情的考驗。<br>
+            測驗結束後提供錯題解析。<br>
             準備好了嗎？
         </p>
         <button class="btn" onclick="game.start()">開始測驗</button>
@@ -306,6 +384,12 @@
         <div id="final-score" class="final-score">0</div>
         <div id="rank-badge" class="rank-badge">評語計算中...</div>
         <p class="intro-text" id="result-detail">正確率: 0%</p>
+
+        <div id="wrong-answers-section" class="wrong-answers-section">
+            <div class="wrong-title">❌ 錯題回顧與解析</div>
+            <div id="wrong-list-content"></div>
+        </div>
+
         <button class="btn" onclick="location.reload()">再玩一次</button>
     </div>
 </div>
@@ -508,6 +592,7 @@
         timer: null,
         correctCount: 0,
         isAnswered: false,
+        wrongQuestions: [], // 儲存答錯的題號
 
         start: function() {
             document.getElementById('start-screen').classList.remove('active');
@@ -591,6 +676,7 @@
                 allBtns[q.ans].classList.add('correct'); // Show correct ans
                 this.score -= 50;
                 this.showFloatingScore(`-50`, false);
+                this.wrongQuestions.push(this.currentQ); // 記錄錯題
             }
 
             document.getElementById('score-display').innerText = `分數: ${this.score}`;
@@ -607,6 +693,7 @@
             
             this.score -= 50;
             this.showFloatingScore(`時間到 -50`, false);
+            this.wrongQuestions.push(this.currentQ); // 記錄錯題
             document.getElementById('score-display').innerText = `分數: ${this.score}`;
             this.showExplanation(q.exp);
         },
@@ -643,6 +730,7 @@
             const accuracy = Math.round((this.correctCount / questions.length) * 100);
             document.getElementById('result-detail').innerText = `答對 ${this.correctCount}/${questions.length} 題 (正確率 ${accuracy}%)`;
 
+            // Rank Logic
             let rank = '';
             if (this.score > 6000) rank = "🏆 課程報告小組之神";
             else if (this.score > 5000) rank = "🥇 核心成員";
@@ -652,6 +740,28 @@
             else rank = "💀 你是被踢出群組了吧";
 
             document.getElementById('rank-badge').innerText = rank;
+
+            // Generate Wrong Answers List
+            const wrongSection = document.getElementById('wrong-answers-section');
+            const wrongContent = document.getElementById('wrong-list-content');
+            wrongContent.innerHTML = ''; // Clear previous
+
+            if (this.wrongQuestions.length > 0) {
+                wrongSection.style.display = 'block';
+                this.wrongQuestions.forEach(idx => {
+                    const q = questions[idx];
+                    const item = document.createElement('div');
+                    item.className = 'wrong-item';
+                    item.innerHTML = `
+                        <div class="w-q">Q: ${q.q}</div>
+                        <div class="w-ans">正確答案: ${q.options[q.ans]}</div>
+                        <div class="w-exp">💡 ${q.exp}</div>
+                    `;
+                    wrongContent.appendChild(item);
+                });
+            } else {
+                wrongSection.style.display = 'none';
+            }
         }
     };
 </script>
