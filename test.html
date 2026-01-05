@@ -1,1 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>課程報告小組 - 友情大殘酷大測驗</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
 
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(135deg, var(--background), #1e1b4b);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* Start Screen */
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .intro-text {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Quiz Screen */
+        .header-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .timer-bar {
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: var(--warning);
+            width: 100%;
+            transition: width 1s linear;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+            text-align: left;
+            width: 100%;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .option-btn {
+            background: #334155;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            color: #e2e8f0;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover {
+            background: #475569;
+        }
+
+        .option-btn.correct {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .option-btn.wrong {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .option-btn.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Explanation Section */
+        .explanation-box {
+            margin-top: 1.5rem;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--secondary);
+            text-align: left;
+            width: 100%;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+
+        .explanation-title {
+            color: var(--secondary);
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .explanation-content {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        .next-btn {
+            margin-top: 1.5rem;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            background: var(--text);
+            color: var(--background);
+            display: none;
+        }
+
+        .next-btn:hover {
+            background: #cbd5e1;
+            transform: translateY(-2px);
+        }
+
+        /* Score Animation */
+        .score-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: bold;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @keyframes scoreUp {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            50% { transform: translate(-50%, -80%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -120%) scale(1); opacity: 0; }
+        }
+
+        /* Result Screen */
+        .final-score {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--warning);
+            text-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+            margin: 1rem 0;
+        }
+
+        .rank-badge {
+            font-size: 1.5rem;
+            background: #334155;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="start-screen" class="screen active">
+        <h1>課程報告小組<br>友情大殘酷大測驗</h1>
+        <p class="intro-text">
+            共 31 題，每題限時 15 秒。<br>
+            答題越快分數越高，錯誤會倒扣！<br>
+            這是一場關於記憶力與友情的考驗。<br>
+            準備好了嗎？
+        </p>
+        <button class="btn" onclick="game.start()">開始測驗</button>
+    </div>
+
+    <div id="quiz-screen" class="screen">
+        <div class="header-bar">
+            <span id="progress-text">題號 1/31</span>
+            <span id="score-display">分數: 0</span>
+        </div>
+        <div class="timer-bar">
+            <div id="timer-fill" class="timer-fill"></div>
+        </div>
+        <div id="question-text" class="question-text">題目載入中...</div>
+        <div id="options-grid" class="options-grid">
+            </div>
+        
+        <div id="explanation-box" class="explanation-box">
+            <div class="explanation-title">💡 解析</div>
+            <div id="explanation-content" class="explanation-content"></div>
+        </div>
+
+        <button id="next-btn" class="btn next-btn" onclick="game.nextQuestion()">下一題</button>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <h1>測驗結束</h1>
+        <p class="intro-text">你的友情純度得分</p>
+        <div id="final-score" class="final-score">0</div>
+        <div id="rank-badge" class="rank-badge">評語計算中...</div>
+        <p class="intro-text" id="result-detail">正確率: 0%</p>
+        <button class="btn" onclick="location.reload()">再玩一次</button>
+    </div>
+</div>
+
+<script>
+    // Data Source
+    const questions = [
+        {
+            q: "姜秉弘曾說玩哪一款遊戲會導致「失智」，甚至說「兩天前的分數會跟兩天後一樣」？",
+            options: ["傳說對決", "聯盟戰棋", "英雄聯盟", "決勝時刻"],
+            ans: 1,
+            exp: "2024/03/01 姜秉弘在群組說：「我發現不能再玩聯盟戰棋了」、「會失智」。"
+        },
+        {
+            q: "在討論麥當勞點餐時，李昌益指名要點哪一樣「大杯」的品項？",
+            options: ["可樂", "雪碧", "玉米濃湯", "檸檬紅茶"],
+            ans: 2,
+            exp: "2024/03/17 李昌益明確表示：「我要大杯玉米濃湯」、「我要喝爆」。"
+        },
+        {
+            q: "葉宣澈曾抱怨租屋處的冰箱門關不起來（因為沒除霜），姜秉弘提出了什麼荒謬的解決方案？",
+            options: ["用膠帶直接強制把門黏起來", "插頭拔掉拿去曬太陽順便殺菌", "買新的小冰箱然後叫房東出錢", "用腳大力把門踹進去"],
+            ans: 1,
+            exp: "2025/08/13 早上，葉宣澈說冰箱很爛沒除霜門關不起來，姜秉弘提議：「插頭拔掉」、「拿去曬太陽」、「順便殺菌」。"
+        },
+        {
+            q: "誰曾說出「因為你有淋巴癌」這個地獄梗，結果被葉宣澈回嗆「你有淋病」？",
+            options: ["朱冠瑜", "余秉融", "姜秉弘", "葉德寬"],
+            ans: 1,
+            exp: "2024/03/30 姜秉弘說「好地獄喔」，余秉融接梗說：「因為你有淋巴癌」。"
+        },
+        {
+            q: "3/31 參訪華哥當天，李昌益透露華哥等一下要搬多少箱水果？",
+            options: ["100箱", "500箱", "800箱", "1000箱"],
+            ans: 3,
+            exp: "2024/03/31 參訪結束後，李昌益在群組說：「真的很忙」、「我聽說等一下要搬1000箱水果」。"
+        },
+        {
+            q: "姜秉弘曾形容葉宣澈買的 13 組貼圖中，有一組「賓士貓 Ohagi」的價格是 50 元，並評論另一位創作者「張譯eddy」的貼圖要 150 元是什麼行為？",
+            options: ["搶劫", "斂財", "詐騙", "很可悲"],
+            ans: 1,
+            exp: "2024/04/01 姜秉弘比較貼圖價格後評論：「張譯那個要150」、「斂財」。"
+        },
+        {
+            q: "姜秉弘曾因為吃了什麼東西導致喉嚨不舒服、咳到要死，甚至說晚餐不能吃炸的了？",
+            options: ["辣的麵線羹", "糖果", "很油的鍋燒麵", "滷味"],
+            ans: 1,
+            exp: "2025/06/18 姜秉弘說：「媽的吃了那個糖果」、「現在我感覺不能吃炸的了」、「咳到要死」。"
+        },
+        {
+            q: "姜秉弘在雨天意外闖紅燈後，原本說冒著 1600 的風險，後來自己在群組改口說是多少？",
+            options: ["1200", "1800", "2400", "3600"],
+            ans: 1,
+            exp: "2025/06/03 姜秉弘說：「現在我們冒著1600的風險」，隨後自己更正數字：「1800」。"
+        },
+        {
+            q: "4/17 姜秉弘因為忘記拿什麼東西，而在群組對葉德寬說「請你喝」？",
+            options: ["茶裏王", "水", "雪碧", "酒"],
+            ans: 1,
+            exp: "2024/04/17 姜秉弘說：「我忘記拿水了」、「@葉德寬 請你喝」。"
+        },
+        {
+            q: "3/18 李昌益分享晚餐點了14號餐、單點鮮酥雞肉羹和豬肉可樂餅，他在群組回報的總金額是多少？",
+            options: ["159", "169", "179", "189"],
+            ans: 1,
+            exp: "2024/03/18 李昌益列出餐點後，自己補充價格：「169」。"
+        },
+        {
+            q: "4月初花蓮大地震，葉宣澈分享了家中受災照，並提到花蓮港發生了什麼事？",
+            options: ["淹水", "裂掉", "船舶無法正常靠岸", "連環車禍"],
+            ans: 1,
+            exp: "2024/04/03 地震後，葉宣澈回報：「我家地板裂掉」、「花蓮港裂掉」。"
+        },
+        {
+            q: "大家在討論租屋（大學金賞）時，姜秉弘說「沒有____容易憂鬱症」？",
+            options: ["窗戶", "網路", "陽台", "大空間"],
+            ans: 2,
+            exp: "2024/04/03 姜秉弘評論該物件：「那邊沒陽台」、「沒陽台容易憂鬱症」。"
+        },
+        {
+            q: "為了去青埔吃飯，朱冠瑜原本提議 3:15 或 3:20 出門，最後葉宣澈定案的車棚集合時間是幾點幾分？",
+            options: ["15:15", "15:25", "15:30", "15:35"],
+            ans: 1,
+            exp: "2025/05/29 討論出發時間，最後葉宣澈拍板：「15:25車棚」、「出發」。"
+        },
+        {
+            q: "誰在玩《當個創世神》（Minecraft）時，被指出「家裡沒有屋頂」，而且還是用樺木蓋的？",
+            options: ["葉宣澈", "姜秉弘", "朱冠瑜", "余秉融"],
+            ans: 2,
+            exp: "2024/04/09 姜秉弘說：「他家沒有屋頂」、「有樺木木材蓋的」。"
+        },
+        {
+            q: "2024/04/14，葉宣澈聲稱自己「做空」了哪一種虛擬貨幣並賺錢？",
+            options: ["Bitcoin", "Ethereum", "Doge", "ADA"],
+            ans: 2,
+            exp: "2024/04/14 葉宣澈傳訊：「我做空Doge」、「賺爛」。"
+        },
+        {
+            q: "3/15 大家在看羽球比賽時，姜秉弘因為哪個比分而讚嘆「🐮🍺」？",
+            options: ["21比0", "11比0", "8比0", "7比0"],
+            ans: 2,
+            exp: "2024/03/15 姜秉弘傳送訊息：「8：0」、「🐮🍺」。"
+        },
+        {
+            q: "誰曾經為了看羽球比賽（Shida），結果直接睡死，錯過了比賽？",
+            options: ["李昌益", "朱冠瑜", "姜秉弘", "葉宣澈"],
+            ans: 1,
+            exp: "2024/03/16 葉宣澈標記朱冠瑜說：「睡死」，因為前一晚朱冠瑜說要看球賽結果沒出現。"
+        },
+        {
+            q: "2025/09/12 晚上，姜秉弘認真問葉德寬要不要吃什麼？",
+            options: ["滷味", "36年豆花", "鹹酥雞", "麥當勞"],
+            ans: 2,
+            exp: "2025/09/12 22:19 姜秉弘問：「認真問」、「要不要吃鹹酥雞」。"
+        },
+        {
+            q: "4/17 葉德寬問要不要吃「哈胖」，姜秉弘點了什麼麵（並要求加麵）？",
+            options: ["古早味乾麵", "古早味肉燥湯麵", "鍋燒意麵", "蔥燒牛肉乾麵"],
+            ans: 1,
+            exp: "2024/04/17 姜秉弘點餐：「我要古早味肉燥湯麵 加麵」。"
+        },
+        {
+            q: "余秉融曾問大家要不要去他家看他的什麼新東西？",
+            options: ["新床墊", "新沙發", "新枕頭", "新電風扇"],
+            ans: 2,
+            exp: "2024/04/18 余秉融問：「要不要來我家躺躺看我的新枕頭」。"
+        },
+        {
+            q: "葉宣澈在 2025/10/30 提到羽球雙打最後一分很荒謬，因為他和誰都在「躲拍子」？",
+            options: ["姜秉弘", "葉德寬", "朱冠瑜", "李昌益"],
+            ans: 2,
+            exp: "2025/10/30 葉宣澈檢討球賽時說：「我以為豬豬（朱冠瑜）站位比較後面... 我們兩個都在躲拍子的畫面很好笑」。"
+        },
+        {
+            q: "在討論通識課「婚姻與家庭」的期中考題時，題目要求用什麼分析法來分析婚姻？",
+            options: ["PEST 分析", "五力分析", "SWOT 分析", "4P 分析"],
+            ans: 2,
+            exp: "2024/04/15 葉宣澈貼出的考題要求：「請試著用SWOT分析...」。"
+        },
+        {
+            q: "4/11 的經濟學小考，大家原本以為是9點考，結果後來發現是「經濟課的第幾節」？",
+            options: ["第一節", "第二節", "第三節", "第四節"],
+            ans: 2,
+            exp: "2024/04/11 姜秉弘確認考試時間，葉宣澈回覆是「經濟課第三節」（即11:00）。"
+        },
+        {
+            q: "誰在期末考週時，因為覺得自己報告寫了一篇「弟子規」那麼長的文章 卻還是拿到一樣的分數而感到不解？",
+            options: ["葉宣澈", "姜秉弘", "李昌益", "葉德寬"],
+            ans: 1,
+            exp: "2024/06/20 姜秉弘抱怨：「我寫一篇弟子規給他」、「分數跟你們一樣」。"
+        },
+        {
+            q: "大家在申請租屋補助時，誰因為合約書上「日期被蓋章」但自己沒簽名，導致申請需要補件？",
+            options: ["葉宣澈", "朱冠瑜", "姜秉弘", "葉德寬"],
+            ans: 0,
+            exp: "2024/04/19 葉宣澈說：「我租屋補助要補件」、「那個日期被蓋章」、「我沒簽名」。"
+        },
+        {
+            q: "姜秉弘曾說如果被抓去驗尿會有毒品反應，是因為他喝了什麼東西？",
+            options: ["薑母鴨", "普拿疼水", "大正百保能", "放一個禮拜的礦泉水"],
+            ans: 2,
+            exp: "2024/06/13 姜秉弘說：「我覺得我現在去驗尿會有毒品反應」、「我喝大正百保能」。"
+        },
+        {
+            q: "葉宣澈在2024年的4/1 設定公告，提醒大家 4/19 要上傳哪門課的期中作業？",
+            options: ["管理學", "經濟學", "企業倫理", "行銷管理"],
+            ans: 2,
+            exp: "2024/04/01 葉宣澈設定公告：「4/19（五）企業倫理期中作業上傳」。"
+        },
+        {
+            q: "4/17 姜秉弘的電腦發生了什麼狀況，導致他說「狀況不樂觀」？",
+            options: ["藍屏", "疑似中毒", "無法充電", "鍵盤沒反應"],
+            ans: 1,
+            exp: "2024/04/17 姜秉弘傳了一張電腦畫面說：「狀況不樂觀」、「感覺中毒了」。"
+        },
+        {
+            q: "姜秉弘曾說玩投資，大二就可以「買別墅」，或者怎麼樣？",
+            options: ["休學", "瘋狂花錢", "自殺", "買樂透捐給窮人"],
+            ans: 2,
+            exp: "2024/04/14 姜秉弘評論投資風險時說：「大二就可以買別墅了」、「或自殺」。"
+        },
+        {
+            q: "朱冠瑜在 4/25 經濟課沒去上課，但他請同學幫忙拍了哪裡的照片來確認狀況？",
+            options: ["老師的臉", "黑板筆記", "教室裡面", "點名單"],
+            ans: 2,
+            exp: "2024/04/25 朱冠瑜沒去上課，請姜秉弘：「幫我拍教室裡面」。"
+        },
+        {
+            q: "2025/03/06 早上姜秉弘問朱冠瑜「你剛起床喔」，朱冠瑜回覆了什麼？",
+            options: ["剛洗完澡", "剛起秋", "剛喝完咖啡", "剛尻槍"],
+            ans: 1,
+            exp: "2025/03/06 08:23，朱冠瑜回覆：「剛起秋」。"
+        }
+    ];
+
+    const game = {
+        score: 0,
+        currentQ: 0,
+        timeLeft: 15,
+        timer: null,
+        correctCount: 0,
+        isAnswered: false,
+
+        start: function() {
+            document.getElementById('start-screen').classList.remove('active');
+            document.getElementById('quiz-screen').classList.add('active');
+            this.loadQuestion();
+        },
+
+        loadQuestion: function() {
+            if (this.currentQ >= questions.length) {
+                this.endGame();
+                return;
+            }
+
+            // Reset UI
+            this.isAnswered = false;
+            this.timeLeft = 15;
+            document.getElementById('timer-fill').style.width = '100%';
+            document.getElementById('timer-fill').style.backgroundColor = '#f59e0b';
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('explanation-box').style.display = 'none';
+            document.getElementById('progress-text').innerText = `題號 ${this.currentQ + 1}/${questions.length}`;
+
+            // Load Content
+            const q = questions[this.currentQ];
+            document.getElementById('question-text').innerText = q.q;
+            
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('div');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => this.selectOption(index, btn);
+                grid.appendChild(btn);
+            });
+
+            // Start Timer
+            this.startTimer();
+        },
+
+        startTimer: function() {
+            clearInterval(this.timer);
+            this.timer = setInterval(() => {
+                this.timeLeft -= 0.1;
+                const pct = (this.timeLeft / 15) * 100;
+                document.getElementById('timer-fill').style.width = `${pct}%`;
+                
+                if (this.timeLeft <= 5) {
+                    document.getElementById('timer-fill').style.backgroundColor = '#ef4444';
+                }
+
+                if (this.timeLeft <= 0) {
+                    clearInterval(this.timer);
+                    this.timeOut();
+                }
+            }, 100);
+        },
+
+        selectOption: function(index, btnElement) {
+            if (this.isAnswered) return;
+            this.isAnswered = true;
+            clearInterval(this.timer);
+
+            const q = questions[this.currentQ];
+            const allBtns = document.querySelectorAll('.option-btn');
+            
+            allBtns.forEach(b => b.classList.add('disabled'));
+
+            if (index === q.ans) {
+                // Correct
+                btnElement.classList.add('correct');
+                const timeBonus = Math.ceil(this.timeLeft * 10);
+                const points = 100 + timeBonus;
+                this.score += points;
+                this.correctCount++;
+                this.showFloatingScore(`+${points}`, true);
+            } else {
+                // Wrong
+                btnElement.classList.add('wrong');
+                allBtns[q.ans].classList.add('correct'); // Show correct ans
+                this.score -= 50;
+                this.showFloatingScore(`-50`, false);
+            }
+
+            document.getElementById('score-display').innerText = `分數: ${this.score}`;
+            this.showExplanation(q.exp);
+        },
+
+        timeOut: function() {
+            if (this.isAnswered) return;
+            this.isAnswered = true;
+            const q = questions[this.currentQ];
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.classList.add('disabled'));
+            allBtns[q.ans].classList.add('correct');
+            
+            this.score -= 50;
+            this.showFloatingScore(`時間到 -50`, false);
+            document.getElementById('score-display').innerText = `分數: ${this.score}`;
+            this.showExplanation(q.exp);
+        },
+
+        showExplanation: function(text) {
+            const box = document.getElementById('explanation-box');
+            document.getElementById('explanation-content').innerText = text;
+            box.style.display = 'block';
+            document.getElementById('next-btn').style.display = 'inline-block';
+        },
+
+        nextQuestion: function() {
+            this.currentQ++;
+            this.loadQuestion();
+        },
+
+        showFloatingScore: function(text, isGood) {
+            const el = document.createElement('div');
+            el.className = 'score-popup';
+            el.innerText = text;
+            el.style.color = isGood ? '#22c55e' : '#ef4444';
+            document.body.appendChild(el);
+            el.style.animation = 'scoreUp 1s forwards';
+            setTimeout(() => el.remove(), 1000);
+        },
+
+        endGame: function() {
+            document.getElementById('quiz-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.add('active');
+            
+            const finalScoreEl = document.getElementById('final-score');
+            finalScoreEl.innerText = this.score;
+
+            const accuracy = Math.round((this.correctCount / questions.length) * 100);
+            document.getElementById('result-detail').innerText = `答對 ${this.correctCount}/${questions.length} 題 (正確率 ${accuracy}%)`;
+
+            let rank = '';
+            if (this.score > 6000) rank = "🏆 課程報告小組之神";
+            else if (this.score > 5000) rank = "🥇 核心成員";
+            else if (this.score > 4000) rank = "🥈 忠實夥伴";
+            else if (this.score > 3000) rank = "🥉 普通組員";
+            else if (this.score > 1000) rank = "💩 冗員";
+            else rank = "💀 你是被踢出群組了吧";
+
+            document.getElementById('rank-badge').innerText = rank;
+        }
+    };
+</script>
+
+</body>
+</html>
